@@ -82,6 +82,9 @@ export default function InventoryTransferPage() {
   const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [isLoadingTransfers, setIsLoadingTransfers] = useState(true);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 8;
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
   const [godowns, setGodowns] = useState<Godown[]>([]);
@@ -126,12 +129,8 @@ export default function InventoryTransferPage() {
   }, [productSearchRef]);
 
   useEffect(() => {
-    const loadData = async () => {
-      await fetchTransfers();
-      setIsInitialLoading(false);
-    };
-    loadData();
-  }, []);
+    fetchTransfers();
+  }, [currentPage]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -288,7 +287,11 @@ export default function InventoryTransferPage() {
   const fetchTransfers = async () => {
     try {
       setIsLoadingTransfers(true);
-      const response = await fetch(`${getApiUrl()}/api/inventory-transfers/all`, {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString()
+      });
+      const response = await fetch(`${getApiUrl()}/api/inventory-transfers/all?${params.toString()}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -331,6 +334,7 @@ export default function InventoryTransferPage() {
             return { ...t, product: prod };
           });
           setTransfers(normalized);
+          setTotalPages(result.totalPages || 1);
           console.log('Transfers set:', normalized);
         } else {
           console.error('Invalid response format:', result);
@@ -930,6 +934,33 @@ export default function InventoryTransferPage() {
                 })
               )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="p-4 bg-gray-50 border-t flex items-center justify-between mt-4 rounded-b-lg">
+                <span className="text-sm text-gray-500 font-medium">
+                  Page <span className="font-semibold text-gray-900">{currentPage}</span> of <span className="font-semibold text-gray-900">{totalPages}</span>
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
             </>
             )}
           </CardContent>

@@ -14,6 +14,9 @@ import { useToast } from "@/hooks/use-toast";
 export default function AdvanceBookingPage() {
   const [showForm, setShowForm] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 8;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -121,13 +124,30 @@ export default function AdvanceBookingPage() {
 
   const fetchBookings = async () => {
     try {
-      const res = await fetch(`${getApiUrl()}/api/advance-bookings`, { credentials: 'include' });
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString()
+      });
+      if (statusFilter !== "all") {
+        params.append("status", statusFilter);
+      }
+      const res = await fetch(`${getApiUrl()}/api/advance-bookings?${params.toString()}`, { credentials: 'include' });
       const data = await res.json();
       setBookings(data.bookings || []);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    if (isInitialLoading) return;
+    fetchBookings();
+  }, [currentPage, statusFilter]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
 
   const fetchBranches = async () => {
     try {
@@ -498,7 +518,7 @@ export default function AdvanceBookingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {bookings.filter((booking: any) => statusFilter === "all" || booking.status === statusFilter).map((booking: any) => (
+                {bookings.map((booking: any) => (
                   <tr key={booking._id}>
                     <td className="px-6 py-4 text-sm">
                       <div>{booking.customerName}</div>
@@ -558,7 +578,7 @@ export default function AdvanceBookingPage() {
 
           {/* Mobile Cards */}
           <div className="md:hidden divide-y divide-gray-200">
-            {bookings.filter((booking: any) => statusFilter === "all" || booking.status === statusFilter).map((booking: any) => (
+            {bookings.map((booking: any) => (
               <div key={booking._id} className="p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
@@ -612,6 +632,33 @@ export default function AdvanceBookingPage() {
               </div>
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="p-4 bg-gray-50 border-t flex items-center justify-between rounded-b-lg">
+              <span className="text-sm text-gray-500 font-medium">
+                Page <span className="font-semibold text-gray-900">{currentPage}</span> of <span className="font-semibold text-gray-900">{totalPages}</span>
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* View Details Modal */}

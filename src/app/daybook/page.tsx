@@ -66,16 +66,12 @@ export default function DayBookPage() {
     setLoading(true);
     setFetched(false);
     try {
-      const res = await fetch(`${getApiUrl()}/api/billing/`, {
+      const res = await fetch(`${getApiUrl()}/api/billing?date=${selectedDate}`, {
         credentials: 'include',
       });
       const data = await res.json();
       if (data.success) {
-        const filtered = data.billings.filter((b: any) => {
-          const billDate = new Date(b.date).toISOString().split('T')[0];
-          return billDate === selectedDate;
-        });
-        setBillings(filtered);
+        setBillings(data.billings || []);
       }
     } catch (err) {
       console.error('Error fetching billings:', err);
