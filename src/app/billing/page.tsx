@@ -13,6 +13,7 @@ import { BillingStats } from "@/components/BillingStats";
 import { BillingCharts } from "@/components/BillingCharts";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Eye, Trash2, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
 export default function BillingPage() {
@@ -299,24 +300,30 @@ export default function BillingPage() {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => setViewingRecord(record)}
-                            className="text-xs font-semibold text-blue-600 hover:underline px-2.5 py-1.5 rounded-lg hover:bg-blue-50 transition-all"
+                            title="View Details"
+                            className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
                           >
-                            Details
+                            <Eye className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => triggerDownloadPdf(record)}
                             disabled={pdfDownloadingId === record._id}
-                            className="text-xs font-semibold text-emerald-600 hover:underline px-2.5 py-1.5 rounded-lg hover:bg-emerald-50 transition-all flex items-center gap-1"
+                            title="Download PDF"
+                            className="p-1.5 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
                           >
-                            <AiOutlineFilePdf className="w-3.5 h-3.5" />
-                            {pdfDownloadingId === record._id ? 'Generating...' : 'PDF'}
+                            {pdfDownloadingId === record._id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <AiOutlineFilePdf className="w-4 h-4" />
+                            )}
                           </button>
                           {userRole === 'admin' && (
                             <button
                               onClick={() => setDeleteConfirmId(record._id)}
-                              className="text-xs font-semibold text-rose-600 hover:underline px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition-all"
+                              title="Delete Record"
+                              className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
                             >
-                              Delete
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           )}
                         </div>
