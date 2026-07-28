@@ -127,7 +127,8 @@ import {
   ChevronRight,
   Target,
   Calendar,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from "lucide-react";
 
 interface SidebarProps {
@@ -149,6 +150,7 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
     { href: "/sales-person", label: "Sales Person", icon: Users },
     { href: "/targets", label: "Targets", icon: Target },
     { href: "/inventory-transfer-dashboard", label: "Inventory Transfer", icon: ArrowRightLeft },
+    { href: "/ai-assistant", label: "AI Assistant", icon: Sparkles },
   ] : [
     { href: "/billing", label: "Billing", icon: FileText },
     { href: "/advance-booking", label: "Advance Booking", icon: Calendar },

@@ -99,6 +99,16 @@ export default function InventoryTransferFormPage() {
     fetchBranches();
   }, [router]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showSerialScanner) {
+        closeExternalScanner();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showSerialScanner]);
+
 
 
   useEffect(() => {
@@ -639,8 +649,14 @@ const fetchBranches = async () => {
         
         {/* External Scanner Modal for Serial Number */}
         {showSerialScanner && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+          <div 
+            onClick={closeExternalScanner}
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+            >
               <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 rounded-t-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">

@@ -28,6 +28,16 @@ export default function DayBookPage() {
     fetchBranches();
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && viewingRecord) {
+        setViewingRecord(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [viewingRecord]);
+
   const fetchBranches = async () => {
     try {
       const res = await fetch(`${getApiUrl()}/api/branches`, {

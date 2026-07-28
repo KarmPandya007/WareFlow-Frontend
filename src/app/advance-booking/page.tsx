@@ -122,6 +122,32 @@ export default function AdvanceBookingPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (selectedBooking) setSelectedBooking(null);
+        if (showSerialScanner) {
+          setShowSerialScanner(false);
+          setScanningProductId(null);
+          setScannedValue("");
+        }
+        if (showCheckCodeScanner) {
+          setShowCheckCodeScanner(false);
+          setScanningProductId(null);
+          setScannedValue("");
+        }
+        if (showModelScanner) {
+          setShowModelScanner(false);
+          setScanningProductId(null);
+          setScannedValue("");
+        }
+        if (deleteConfirmId) setDeleteConfirmId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedBooking, showSerialScanner, showCheckCodeScanner, showModelScanner, deleteConfirmId]);
+
   const fetchBookings = async () => {
     try {
       const params = new URLSearchParams({
@@ -1122,8 +1148,14 @@ export default function AdvanceBookingPage() {
 
         {/* Serial Number Scanner Modal */}
         {showSerialScanner && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+          <div 
+            onClick={() => { setShowSerialScanner(false); setScanningProductId(null); setScannedValue(""); }}
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+            >
               <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 rounded-t-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
@@ -1165,8 +1197,14 @@ export default function AdvanceBookingPage() {
 
         {/* CHECK Code Scanner Modal */}
         {showCheckCodeScanner && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+          <div 
+            onClick={() => { setShowCheckCodeScanner(false); setScanningProductId(null); setScannedValue(""); }}
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+            >
               <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
@@ -1208,8 +1246,14 @@ export default function AdvanceBookingPage() {
 
         {/* Model Scanner Modal */}
         {showModelScanner && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+          <div 
+            onClick={() => { setShowModelScanner(false); setScanningProductId(null); setScannedValue(""); }}
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+            >
               <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
@@ -1251,8 +1295,14 @@ export default function AdvanceBookingPage() {
 
         {/* Delete Confirmation Modal */}
         {deleteConfirmId && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+          <div 
+            onClick={() => setDeleteConfirmId(null)}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+            >
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Are you absolutely sure?</h3>
                 <p className="text-gray-600 mb-6">This action cannot be undone. This will permanently delete the booking.</p>

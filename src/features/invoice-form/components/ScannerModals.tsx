@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { RefObject, useEffect } from 'react';
 import { Scan, X } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -27,14 +27,32 @@ export function ScannerModals({
   handleScannerInput,
   scannerInputRef
 }: ScannerModalsProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showSerialScanner || showCheckCodeScanner || showModelScanner) {
+          closeExternalScanner();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showSerialScanner, showCheckCodeScanner, showModelScanner, closeExternalScanner]);
+
   if (!showSerialScanner && !showCheckCodeScanner && !showModelScanner) return null;
 
   return (
     <>
       {/* External Scanner Modal for Serial Number */}
       {showSerialScanner && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+        <div 
+          onClick={closeExternalScanner}
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+          >
             <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -104,8 +122,14 @@ export function ScannerModals({
 
       {/* External Scanner Modal for CHECK Code */}
       {showCheckCodeScanner && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+        <div 
+          onClick={closeExternalScanner}
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+          >
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -175,8 +199,14 @@ export function ScannerModals({
 
       {/* External Scanner Modal for Model */}
       {showModelScanner && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
-          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
+        <div 
+          onClick={closeExternalScanner}
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-lg shadow-2xl w-full max-w-md"
+          >
             <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">

@@ -142,7 +142,22 @@ export default function DashboardPage() {
         day: "numeric",
       })
     );
+  }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (showExportModal) setShowExportModal(false);
+        if (viewingRecord) {
+          setViewingRecord(null);
+          setFetchedProductDetails([]);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showExportModal, viewingRecord]);
+  useEffect(() => {
     // Fetch all data in parallel for faster load
     const fetchAllData = async () => {
       setLoadingTotals(true);
@@ -1141,8 +1156,14 @@ export default function DashboardPage() {
       
       {/* Export Modal Logic if needed can be added here or in a separate component */}
       {showExportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl">
+        <div 
+          onClick={() => setShowExportModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl"
+          >
             <h3 className="text-xl font-bold mb-4">Export Billing Data</h3>
             <div className="space-y-4">
               <div>
