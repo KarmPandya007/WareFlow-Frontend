@@ -484,11 +484,9 @@ export default function TargetsPage() {
       setIsDataLoading(true);
       await Promise.all([
         fetchTargets(),
-        fetchUsers(),
         fetchSalespersons(),
         fetchAvailableProducts()
       ]);
-      await calculateProgress();
       setIsDataLoading(false);
       setIsInitialLoading(false);
     };
@@ -516,24 +514,12 @@ export default function TargetsPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        setSalespersons(data.salesPersons || []);
+        const list = data.salesPersons || [];
+        setSalespersons(list);
+        setUsers(list);
       }
     } catch (error) {
       console.error('Error fetching salesperson :', error);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`${getApiUrl()}/api/salespersons/`, {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.salesPersons || []);
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error);
     }
   };
 
@@ -775,23 +761,23 @@ export default function TargetsPage() {
 
   return (
     <AdminLayout>
-      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50 min-h-screen">
-        <Card className="border-0 shadow-sm">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50 dark:bg-slate-950 min-h-screen">
+        <Card className="border border-gray-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
           <CardHeader className="pb-3">
             <div className="space-y-4">
-              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">Target Management</CardTitle>
+              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-slate-100">Target Management</CardTitle>
               
               {/* Desktop Button Layout */}
               <div className="hidden sm:flex flex-wrap gap-2">
-                <Button onClick={() => setShowUploadModal(true)} variant="outline" className="border-gray-300">
+                <Button onClick={() => setShowUploadModal(true)} variant="outline" className="border-gray-300 dark:border-slate-700">
                   <Upload className="mr-2 h-4 w-4" />
                   Bulk Upload
                 </Button>
-                <Button onClick={downloadTargetsExcel} variant="outline" className="border-gray-300">
+                <Button onClick={downloadTargetsExcel} variant="outline" className="border-gray-300 dark:border-slate-700">
                   <Download className="mr-2 h-4 w-4" />
                   Download Excel
                 </Button>
-                <Button onClick={calculateProgress} disabled={isCalculating} variant="outline" className="border-gray-300">
+                <Button onClick={calculateProgress} disabled={isCalculating} variant="outline" className="border-gray-300 dark:border-slate-700">
                   {isCalculating ? 'Calculating...' : 'Refresh'}
                 </Button>
                 <Button onClick={() => setIsModalOpen(true)} className="bg-blue-600 hover:bg-blue-700">
@@ -803,17 +789,17 @@ export default function TargetsPage() {
               {/* Mobile Button Layout */}
               <div className="sm:hidden space-y-2">
                 <div className="grid grid-cols-2 gap-2">
-                  <Button onClick={() => setShowUploadModal(true)} variant="outline" size="sm" className="border-gray-300">
+                  <Button onClick={() => setShowUploadModal(true)} variant="outline" size="sm" className="border-gray-300 dark:border-slate-700">
                     <Upload className="mr-1 h-3 w-3" />
                     Upload
                   </Button>
-                  <Button onClick={downloadTargetsExcel} variant="outline" size="sm" className="border-gray-300">
+                  <Button onClick={downloadTargetsExcel} variant="outline" size="sm" className="border-gray-300 dark:border-slate-700">
                     <Download className="mr-1 h-3 w-3" />
                     Excel
                   </Button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button onClick={calculateProgress} disabled={isCalculating} variant="outline" size="sm" className="border-gray-300">
+                  <Button onClick={calculateProgress} disabled={isCalculating} variant="outline" size="sm" className="border-gray-300 dark:border-slate-700">
                     {isCalculating ? 'Calc...' : 'Refresh'}
                   </Button>
                   <Button onClick={() => setIsModalOpen(true)} size="sm" className="bg-blue-600 hover:bg-blue-700">
@@ -1347,27 +1333,27 @@ export default function TargetsPage() {
 
         {/* Sales Person Targets Modal */}
         <Dialog open={showSalesPersonTargets} onOpenChange={setShowSalesPersonTargets}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto mx-2 sm:mx-4 w-[95vw] sm:w-full">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto mx-2 sm:mx-4 w-[95vw] sm:w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-900 dark:text-slate-100">
             <DialogHeader>
-              <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
+              <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900 dark:text-slate-100">
                 {selectedSalesPerson?.firstName} {selectedSalesPerson?.lastName} - Targets
               </DialogTitle>
             </DialogHeader>
             {selectedSalesPerson && (
               <div className="space-y-4">
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-800/60 p-3 rounded-lg border border-gray-200 dark:border-slate-700">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                     <div>
-                      <span className="text-xs text-gray-500 block">Email</span>
-                      <p className="font-medium text-gray-900 break-all">{selectedSalesPerson.email}</p>
+                      <span className="text-xs text-gray-500 dark:text-slate-400 block">Email</span>
+                      <p className="font-medium text-gray-900 dark:text-slate-100 break-all">{selectedSalesPerson.email}</p>
                     </div>
                     <div>
-                      <span className="text-xs text-gray-500 block">Total Targets</span>
-                      <p className="font-semibold text-gray-900">{selectedSalesPerson.targets?.length || 0}</p>
+                      <span className="text-xs text-gray-500 dark:text-slate-400 block">Total Targets</span>
+                      <p className="font-semibold text-gray-900 dark:text-slate-100">{selectedSalesPerson.targets?.length || 0}</p>
                     </div>
                     <div>
-                      <span className="text-xs text-gray-500 block">Active</span>
-                      <p className="font-semibold text-amber-600">{selectedSalesPerson.targets?.filter((t: Target) => t.status === 'active').length || 0}</p>
+                      <span className="text-xs text-gray-500 dark:text-slate-400 block">Active</span>
+                      <p className="font-semibold text-amber-600 dark:text-amber-400">{selectedSalesPerson.targets?.filter((t: Target) => t.status === 'active').length || 0}</p>
                     </div>
                   </div>
                 </div>
@@ -1379,27 +1365,27 @@ export default function TargetsPage() {
                       : getProgressPercentage(target.currentValue || 0, target.targetValue || 1);
                     
                     return (
-                    <Card key={target._id} className="border border-gray-200">
+                    <Card key={target._id} className="border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
                       <CardContent className="p-3 sm:p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
                           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <span className="font-medium text-gray-900 text-sm sm:text-base">{getTargetTypeDisplay(target.targetType)}</span>
+                            <span className="font-semibold text-gray-900 dark:text-slate-100 text-sm sm:text-base">{getTargetTypeDisplay(target.targetType)}</span>
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                                target.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                                target.status === 'overdue' ? 'bg-rose-50 text-rose-700 border border-rose-200' :
-                                'bg-amber-50 text-amber-700 border border-amber-200'
+                                target.status === 'completed' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900' :
+                                target.status === 'overdue' ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900' :
+                                'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900'
                               }`}>
                                 {target.status.charAt(0).toUpperCase() + target.status.slice(1)}
                               </span>
-                              <span className="text-xs text-gray-500 whitespace-nowrap">{formatDate(target.startDate)} - {formatDate(target.endDate)}</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400 whitespace-nowrap">{formatDate(target.startDate)} - {formatDate(target.endDate)}</span>
                             </div>
                           </div>
                           <div className="flex gap-1 self-start sm:self-center">
-                            <Button size="sm" variant="ghost" onClick={() => handleEdit(target)} className="h-7 w-7 p-0">
+                            <Button size="sm" variant="ghost" onClick={() => handleEdit(target)} className="h-7 w-7 p-0 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800">
                               <Edit className="h-3.5 w-3.5" />
                             </Button>
-                            <Button size="sm" variant="ghost" onClick={() => handleDelete(target)} className="h-7 w-7 p-0 text-rose-600">
+                            <Button size="sm" variant="ghost" onClick={() => handleDelete(target)} className="h-7 w-7 p-0 text-rose-600 dark:text-rose-400 hover:bg-gray-100 dark:hover:bg-slate-800">
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>
@@ -1410,27 +1396,27 @@ export default function TargetsPage() {
                             {target.productTargets.map((pt) => {
                               const progress = pt.progressPercentage ?? getProgressPercentage(pt.currentValue, pt.targetValue);
                               return (
-                              <div key={pt.category} className="text-center p-3 bg-gray-50 rounded">
-                                <p className="text-xs text-gray-600 capitalize mb-1">{pt.category}</p>
-                                <p className="text-sm font-semibold">{pt.currentValue}/{pt.targetValue}</p>
-                                <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                              <div key={pt.category} className="text-center p-3 bg-gray-50 dark:bg-slate-800/60 rounded border border-gray-200 dark:border-slate-700">
+                                <p className="text-xs text-gray-600 dark:text-slate-300 capitalize mb-1">{pt.category}</p>
+                                <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">{pt.currentValue}/{pt.targetValue}</p>
+                                <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-1.5 mt-2">
                                   <div className={`h-1.5 rounded-full ${
                                     target.status === 'completed' ? 'bg-emerald-600' :
                                     target.status === 'overdue' ? 'bg-rose-600' :
                                     progress < 50 ? 'bg-rose-600' : progress < 80 ? 'bg-amber-500' : 'bg-emerald-600'
                                   }`} style={{ width: `${progress}%` }} />
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1">{progress.toFixed(0)}%</p>
+                                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{progress.toFixed(0)}%</p>
                               </div>
                             )})}
                           </div>
                         ) : (
                           <div className="mb-3">
                             <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 mb-2">
-                              <span className="text-lg font-semibold">{formatTargetValue(target.currentValue || 0, target.targetType)}</span>
-                              <span className="text-xs text-gray-500">/ {formatTargetValue(target.targetValue || 0, target.targetType)}</span>
+                              <span className="text-lg font-semibold text-gray-900 dark:text-slate-100">{formatTargetValue(target.currentValue || 0, target.targetType)}</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400">/ {formatTargetValue(target.targetValue || 0, target.targetType)}</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                               <div className={`h-2 rounded-full ${
                                 target.status === 'completed' ? 'bg-emerald-600' :
                                 target.status === 'overdue' ? 'bg-rose-600' :
@@ -1440,21 +1426,21 @@ export default function TargetsPage() {
                           </div>
                         )}
 
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm pt-2 border-t gap-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm pt-2 border-t border-gray-100 dark:border-slate-800 gap-2">
                           <span className={`font-medium ${
-                            overallProgress >= 80 ? 'text-emerald-600' :
-                            overallProgress >= 50 ? 'text-amber-600' : 'text-rose-600'
+                            overallProgress >= 80 ? 'text-emerald-600 dark:text-emerald-400' :
+                            overallProgress >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'
                           }`}>{overallProgress.toFixed(0)}% Complete</span>
                           {target.incentiveAmount && target.incentiveAmount > 0 && (
                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                               <div className="flex items-center gap-1">
-                                <span className="text-xs text-gray-500">Incentive:</span>
-                                <span className="font-semibold text-emerald-600">₹{target.incentiveAmount.toLocaleString()}</span>
+                                <span className="text-xs text-gray-500 dark:text-slate-400">Incentive:</span>
+                                <span className="font-semibold text-emerald-600 dark:text-emerald-400">₹{target.incentiveAmount.toLocaleString()}</span>
                               </div>
                               <span className={`px-1.5 py-0.5 rounded text-xs self-start ${
-                                target.incentiveStatus === 'paid' ? 'bg-emerald-100 text-emerald-700' :
-                                target.incentiveStatus === 'cancelled' ? 'bg-rose-100 text-rose-700' :
-                                'bg-amber-100 text-amber-700'
+                                target.incentiveStatus === 'paid' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' :
+                                target.incentiveStatus === 'cancelled' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' :
+                                'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
                               }`}>
                                 {target.incentiveStatus || 'pending'}
                               </span>
@@ -1468,8 +1454,8 @@ export default function TargetsPage() {
               </div>
             )}
             
-            <div className="flex justify-end pt-3 border-t">
-              <Button variant="outline" onClick={() => setShowSalesPersonTargets(false)} className="w-full sm:w-auto">
+            <div className="flex justify-end pt-3 border-t border-gray-200 dark:border-slate-800">
+              <Button variant="outline" onClick={() => setShowSalesPersonTargets(false)} className="w-full sm:w-auto border-gray-300 dark:border-slate-700">
                 Close
               </Button>
             </div>
@@ -1478,25 +1464,25 @@ export default function TargetsPage() {
 
         {/* Bulk Upload Modal */}
         <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
-          <DialogContent className="max-w-md mx-2 sm:mx-4 w-[95vw] sm:w-full">
+          <DialogContent className="max-w-md mx-2 sm:mx-4 w-[95vw] sm:w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-900 dark:text-slate-100">
             <DialogHeader>
-              <DialogTitle className="text-base sm:text-lg">Bulk Upload Targets</DialogTitle>
+              <DialogTitle className="text-base sm:text-lg text-gray-900 dark:text-slate-100">Bulk Upload Targets</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Excel File</Label>
+                <Label className="text-gray-900 dark:text-slate-200">Excel File</Label>
                 <input
                   type="file"
                   accept=".xlsx,.xls"
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                  className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full p-2 border border-gray-300 dark:border-slate-700 rounded-md text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100"
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-slate-400">
                   Upload an Excel file with 12 columns: Salesperson Name, Email, Target Type, Target Value, Current Progress, Progress %, Status, Period, Start Date, End Date, Incentive Amount, Incentive Status
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row justify-end gap-3">
-                <Button variant="outline" onClick={() => setShowUploadModal(false)} className="w-full sm:w-auto order-2 sm:order-1">
+                <Button variant="outline" onClick={() => setShowUploadModal(false)} className="w-full sm:w-auto order-2 sm:order-1 border-gray-300 dark:border-slate-700">
                   Cancel
                 </Button>
                 <Button onClick={handleBulkUpload} disabled={isUploading || !uploadFile} className="w-full sm:w-auto order-1 sm:order-2">

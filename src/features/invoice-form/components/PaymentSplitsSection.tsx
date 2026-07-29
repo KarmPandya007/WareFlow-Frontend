@@ -19,12 +19,12 @@ export const PaymentSplitsSection = memo(function PaymentSplitsSection({
   paymentModeTotal
 }: PaymentSplitsSectionProps) {
   return (
-    <section className="p-6 border rounded-lg shadow bg-white">
+    <section className="p-6 border border-gray-200 dark:border-slate-800 rounded-lg shadow bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-gray-800">Split Payment Modes</h2>
+        <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">Split Payment Modes</h2>
         <div className="text-right">
-          <span className="text-sm text-gray-500 mr-2">Payment Total:</span>
-          <span className="text-base font-bold text-blue-600">₹{paymentModeTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          <span className="text-sm text-gray-500 dark:text-slate-400 mr-2">Payment Total:</span>
+          <span className="text-base font-bold text-blue-600 dark:text-blue-400">₹{paymentModeTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
         </div>
       </div>
 
@@ -39,7 +39,7 @@ export const PaymentSplitsSection = memo(function PaymentSplitsSection({
           return (
             <div
               key={mode}
-              className={`flex flex-col border rounded-md p-3 shadow-sm transition-all bg-white hover:bg-gray-50 ${data.selected ? 'border-blue-500 ring-1 ring-blue-200' : 'border-gray-200'} ${showError ? 'border-rose-400 bg-rose-50' : ''}`}
+              className={`flex flex-col border rounded-md p-3 shadow-sm transition-all bg-white dark:bg-slate-800/80 hover:bg-gray-50 dark:hover:bg-slate-800 ${data.selected ? 'border-blue-500 ring-1 ring-blue-200 dark:ring-blue-900' : 'border-gray-200 dark:border-slate-700'} ${showError ? 'border-rose-400 dark:border-rose-600 bg-rose-50 dark:bg-rose-950/40' : ''}`}
             >
               <div className="flex items-center gap-2 mb-2">
                 <input
@@ -49,7 +49,7 @@ export const PaymentSplitsSection = memo(function PaymentSplitsSection({
                   className="w-4 h-4 accent-blue-600 cursor-pointer"
                   id={`pmode-${mode}`}
                 />
-                <Label htmlFor={`pmode-${mode}`} className="font-medium text-gray-800 text-sm cursor-pointer">
+                <Label htmlFor={`pmode-${mode}`} className="font-medium text-gray-800 dark:text-slate-200 text-sm cursor-pointer">
                   {mode}
                 </Label>
               </div>

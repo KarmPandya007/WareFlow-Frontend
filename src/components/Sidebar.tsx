@@ -179,14 +179,14 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
 
       {/* Sidebar */}
       <aside 
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-100 shadow-2xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white dark:bg-slate-900 border-r border-gray-100 dark:border-slate-800 shadow-2xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo Area */}
-          <div className="h-16 flex items-center px-6 border-b border-gray-100">
-            <div className="flex items-center gap-2 font-bold text-xl text-blue-600 tracking-tight">
+          <div className="h-16 flex items-center px-6 border-b border-gray-100 dark:border-slate-800">
+            <div className="flex items-center gap-2 font-bold text-xl text-blue-600 dark:text-blue-400 tracking-tight">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white text-lg">
                 HP
               </div>
@@ -196,7 +196,7 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-2">
+            <div className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-4 px-2">
               Menu
             </div>
             {links.map((link) => {
@@ -209,14 +209,14 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
                   onClick={() => setIsOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
                     isActive 
-                      ? "bg-blue-50 text-blue-600 shadow-sm"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 shadow-sm"
+                      : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`} />
+                  <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-slate-400 group-hover:text-gray-600 dark:group-hover:text-slate-200"}`} />
                   <span className="font-medium text-sm">{link.label}</span>
                   {isActive && (
-                    <ChevronRight className="w-4 h-4 ml-auto text-blue-600" />
+                    <ChevronRight className="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" />
                   )}
                 </Link>
               );
@@ -224,12 +224,12 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
           </nav>
 
           {/* User / Footer */}
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 border-t border-gray-100 dark:border-slate-800">
              <button 
                 onClick={handleLogout}
-                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
+                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-gray-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 group"
              >
-                <LogOut className="w-5 h-5 text-gray-400 group-hover:text-red-500" />
+                <LogOut className="w-5 h-5 text-gray-400 dark:text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400" />
                 <span className="font-medium text-sm">Sign Out</span>
              </button>
           </div>

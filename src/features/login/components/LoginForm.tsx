@@ -37,6 +37,14 @@ const LoginForm = () => {
       localStorage.setItem("userRole", data.user.role.toLowerCase());
       localStorage.setItem("userId", data.user.id);
       localStorage.setItem("userName", data.user.firstName);
+      if (data.user.theme) {
+        localStorage.setItem("theme", data.user.theme);
+        if (data.user.theme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
       
       console.log("User role:", data.user.role.toLowerCase());
 
@@ -52,14 +60,14 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-200">
       {/* Abstract Background Shapes */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-blob" />
-      <div className="absolute top-[-10%] right-[-20%] w-[500px] h-[500px] bg-blue-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000" />
-      <div className="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] bg-pink-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000" />
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-200/40 dark:bg-purple-900/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl animate-blob" />
+      <div className="absolute top-[-10%] right-[-20%] w-[500px] h-[500px] bg-blue-200/40 dark:bg-blue-900/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl animate-blob animation-delay-2000" />
+      <div className="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] bg-pink-200/40 dark:bg-pink-900/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl animate-blob animation-delay-4000" />
 
       {/* Main Card */}
-      <div className="bg-white/70 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl w-full max-w-[420px] p-8 md:p-12 relative z-10 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]">
+      <div className="bg-white/70 dark:bg-slate-900/80 backdrop-blur-xl border border-white/50 dark:border-slate-800 shadow-2xl rounded-3xl w-full max-w-[420px] p-8 md:p-12 relative z-10 transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]">
         
         {/* Header */}
         <div className="text-center mb-10">
@@ -68,8 +76,8 @@ const LoginForm = () => {
                <span className="text-white text-2xl font-bold">HP</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Welcome Back</h1>
-          <p className="text-gray-500 text-sm md:text-base">Sign in to manage billing, inventory coverage & Tally exports</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 tracking-tight mb-2">Welcome Back</h1>
+          <p className="text-gray-500 dark:text-slate-400 text-sm md:text-base">Sign in to manage billing, inventory coverage & Tally exports</p>
         </div>
 
         {/* Form */}
@@ -77,14 +85,14 @@ const LoginForm = () => {
           <div className="space-y-5">
             {/* Phone Input */}
             <div className="relative group">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 ml-1 block">Phone Number</label>
+              <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 block">Phone Number</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Smartphone className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                  <Smartphone className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-blue-500 transition-colors" />
                 </div>
                 <input
                   type="tel"
-                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium placeholder:text-gray-400"
+                  className="w-full pl-11 pr-4 py-3.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 dark:text-slate-100 font-medium placeholder:text-gray-400 dark:placeholder:text-slate-500"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   maxLength={10}
@@ -96,14 +104,14 @@ const LoginForm = () => {
 
             {/* PIN Input */}
             <div className="relative group">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 ml-1 block">Security PIN</label>
+              <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 block">Security PIN</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                  <Lock className="h-5 w-5 text-gray-400 dark:text-slate-500 group-focus-within:text-blue-500 transition-colors" />
                 </div>
                 <input
                   type={showPin ? "text" : "password"}
-                  className="w-full pl-11 pr-12 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 font-medium placeholder:text-gray-400 tracking-widest"
+                  className="w-full pl-11 pr-12 py-3.5 bg-gray-50/50 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-gray-900 dark:text-slate-100 font-medium placeholder:text-gray-400 dark:placeholder:text-slate-500 tracking-widest"
                   value={pin}
                   onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   maxLength={6}
@@ -113,7 +121,7 @@ const LoginForm = () => {
                 <button
                   type="button"
                   onClick={() => setShowPin(!showPin)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 transition-colors"
                 >
                   {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -123,7 +131,7 @@ const LoginForm = () => {
 
           {/* Error Message */}
           {message && (
-            <div className="p-4 rounded-xl flex items-center gap-3 bg-red-50 border border-red-100 text-red-600 text-sm font-medium animate-in slide-in-from-top-2">
+            <div className="p-4 rounded-xl flex items-center gap-3 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm font-medium animate-in slide-in-from-top-2">
               <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
               {message}
             </div>
@@ -151,7 +159,7 @@ const LoginForm = () => {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 dark:text-slate-500 text-sm">
             &copy; {new Date().getFullYear()} HP Computer Billing
           </p>
         </div>

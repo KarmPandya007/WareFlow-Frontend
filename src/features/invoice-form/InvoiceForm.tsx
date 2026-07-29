@@ -502,19 +502,19 @@ export default function InvoiceForm() {
 
   return (
     <AdminLayout>
-      <div className="bg-gray-50 min-h-screen p-4 sm:p-6">
+      <div className="bg-gray-50 dark:bg-slate-950 min-h-screen p-4 sm:p-6">
         <div className="max-w-7xl mx-auto space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg border shadow-sm gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-4 rounded-lg shadow-sm gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <FileText className="w-7 h-7 text-blue-600" /> Invoice Creation Wizard
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                <FileText className="w-7 h-7 text-blue-600 dark:text-blue-400" /> Invoice Creation Wizard
               </h1>
-              <p className="text-sm text-gray-500 mt-1">Fill customer details, products, and attachment slips.</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Fill customer details, products, and attachment slips.</p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button 
                 onClick={() => setShowLedgerListModal(true)}
-                className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 shadow-sm transition-all hover:shadow hover:scale-[1.02] active:scale-95 text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5"
+                className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 shadow-sm transition-all hover:shadow hover:scale-[1.02] active:scale-95 text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5"
               >
                 <FileText className="w-4 h-4" /> View Ledger Directory
               </Button>
@@ -580,14 +580,14 @@ export default function InvoiceForm() {
               />
 
               {/* Attachments Section */}
-              <section className="p-6 border rounded-lg shadow bg-white">
+              <section className="p-6 border border-gray-200 dark:border-slate-800 rounded-lg shadow bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold text-gray-800">Slips & Document Attachments</h2>
+                  <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">Slips & Document Attachments</h2>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setShowQRModal(true)} className="flex items-center gap-1.5">
+                    <Button variant="outline" size="sm" onClick={() => setShowQRModal(true)} className="flex items-center gap-1.5 border-gray-200 dark:border-slate-700">
                       <QrCode className="w-4 h-4" /> Scan from Mobile
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => setShowModal(true)}>
+                    <Button variant="outline" size="sm" onClick={() => setShowModal(true)} className="border-gray-200 dark:border-slate-700">
                       + Custom Field
                     </Button>
                   </div>
@@ -595,11 +595,11 @@ export default function InvoiceForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {['Customer ID', 'Payment Slip', 'Inventory Image', 'Google Review'].map(label => (
-                    <div key={label} className="p-4 border rounded-lg bg-gray-50 flex flex-col justify-between min-h-[120px]">
-                      <Label className="font-semibold text-gray-700">{label}</Label>
+                    <div key={label} className="p-4 border border-gray-200 dark:border-slate-700 rounded-lg bg-gray-50 dark:bg-slate-800/60 flex flex-col justify-between min-h-[120px]">
+                      <Label className="font-semibold text-gray-700 dark:text-slate-300">{label}</Label>
                       {files[label] ? (
-                        <div className="flex justify-between items-center mt-2 bg-white p-2 rounded border">
-                          <span className="text-xs text-gray-600 truncate flex-1">{files[label]}</span>
+                        <div className="flex justify-between items-center mt-2 bg-white dark:bg-slate-900 p-2 rounded border border-gray-200 dark:border-slate-700">
+                          <span className="text-xs text-gray-600 dark:text-slate-300 truncate flex-1">{files[label]}</span>
                           <button onClick={() => removeFile(label)} className="text-rose-500 hover:text-rose-700 ml-2">
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -611,16 +611,16 @@ export default function InvoiceForm() {
                   ))}
 
                   {customAttachments.map(att => (
-                    <div key={att.id} className="p-4 border rounded-lg bg-gray-50 flex flex-col justify-between min-h-[120px]">
+                    <div key={att.id} className="p-4 border border-gray-200 dark:border-slate-700 rounded-lg bg-gray-50 dark:bg-slate-800/60 flex flex-col justify-between min-h-[120px]">
                       <div className="flex justify-between items-center">
-                        <Label className="font-semibold text-gray-700">{att.name}</Label>
+                        <Label className="font-semibold text-gray-700 dark:text-slate-300">{att.name}</Label>
                         <button onClick={() => removeCustomAttachment(att.id, att.name)} className="text-rose-500 hover:text-rose-700">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                       {files[att.name] ? (
-                        <div className="flex justify-between items-center mt-2 bg-white p-2 rounded border">
-                          <span className="text-xs text-gray-600 truncate flex-1">{files[att.name]}</span>
+                        <div className="flex justify-between items-center mt-2 bg-white dark:bg-slate-900 p-2 rounded border border-gray-200 dark:border-slate-700">
+                          <span className="text-xs text-gray-600 dark:text-slate-300 truncate flex-1">{files[att.name]}</span>
                           <button onClick={() => removeFile(att.name)} className="text-rose-500 hover:text-rose-700 ml-2">
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -633,14 +633,14 @@ export default function InvoiceForm() {
                 </div>
 
                 {qrUploads.length > 0 && (
-                  <div className="mt-6 border-t pt-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">QR Uploaded Slips:</h3>
+                  <div className="mt-6 border-t border-gray-200 dark:border-slate-800 pt-4">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">QR Uploaded Slips:</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {qrUploads.map((up, i) => (
-                        <div key={i} className="p-2 border rounded-lg bg-gray-100 flex flex-col justify-between">
+                        <div key={i} className="p-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-gray-100 dark:bg-slate-800 flex flex-col justify-between">
                           <img src={up.fileUrl} alt="slip" className="h-24 w-full object-cover rounded" />
                           <div className="flex justify-between items-center mt-2">
-                            <span className="text-xs text-gray-500">{up.fieldType || 'slip'}</span>
+                            <span className="text-xs text-gray-500 dark:text-slate-400">{up.fieldType || 'slip'}</span>
                             <button onClick={() => removeQRUpload(i)} className="text-rose-500 hover:text-rose-700">
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -670,12 +670,12 @@ export default function InvoiceForm() {
 
       {/* Add Custom Attachment Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border border-gray-200 dark:border-slate-800">
           <DialogHeader>
-            <DialogTitle>Add Custom Attachment Slip</DialogTitle>
+            <DialogTitle className="text-gray-900 dark:text-slate-100">Add Custom Attachment Slip</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <Label className="mb-2">Attachment Name</Label>
+            <Label className="mb-2 text-gray-700 dark:text-slate-300">Attachment Name</Label>
             <Input value={fieldName} onChange={(e) => setFieldName(e.target.value)} placeholder="e.g., Extended Warranty" />
           </div>
           <DialogFooter>
@@ -687,17 +687,17 @@ export default function InvoiceForm() {
 
       {/* QR Upload Modal */}
       <Dialog open={showQRModal} onOpenChange={setShowQRModal}>
-        <DialogContent className="sm:max-w-md text-center">
+        <DialogContent className="sm:max-w-md text-center bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border border-gray-200 dark:border-slate-800">
           <DialogHeader>
-            <DialogTitle>Mobile Upload QR Code</DialogTitle>
+            <DialogTitle className="text-gray-900 dark:text-slate-100">Mobile Upload QR Code</DialogTitle>
           </DialogHeader>
-          <div className="py-6 flex flex-col items-center justify-center gap-4 bg-gray-50 rounded-lg">
+          <div className="py-6 flex flex-col items-center justify-center gap-4 bg-gray-50 dark:bg-slate-800/60 rounded-lg border border-gray-200 dark:border-slate-700">
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeUrl)}`}
               alt="QR Code"
-              className="w-44 h-44 shadow border p-2 bg-white"
+              className="w-44 h-44 shadow border p-2 bg-white rounded-lg"
             />
-            <p className="text-xs text-gray-500 max-w-xs">
+            <p className="text-xs text-gray-500 dark:text-slate-400 max-w-xs">
               Scan this QR code with any mobile device to take camera pictures and upload customer slips directly.
             </p>
           </div>
@@ -709,22 +709,22 @@ export default function InvoiceForm() {
 
       {/* New Ledger Modal */}
       <Dialog open={showNewLedgerModal} onOpenChange={setShowNewLedgerModal}>
-        <DialogContent className="sm:max-w-2xl rounded-2xl p-6">
-          <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
-              <Plus className="w-6 h-6 text-emerald-600" /> Create Customer Ledger Profile
+        <DialogContent className="sm:max-w-2xl rounded-2xl p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border border-gray-200 dark:border-slate-800">
+          <DialogHeader className="border-b border-gray-200 dark:border-slate-800 pb-4">
+            <DialogTitle className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Plus className="w-6 h-6 text-emerald-600 dark:text-emerald-400" /> Create Customer Ledger Profile
             </DialogTitle>
-            <p className="text-xs text-slate-500 mt-1">Configure tax registration status and demographic details.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Configure tax registration status and demographic details.</p>
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-4">
-            <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
-              <Label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">GST Identification Number</Label>
+            <div className="md:col-span-2 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+              <Label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block mb-2">GST Identification Number</Label>
               <div className="flex gap-2">
                 <Input
                   value={ledgerData.gstNo}
                   onChange={(e) => setLedgerData({ ...ledgerData, gstNo: e.target.value.toUpperCase() })}
                   placeholder="Enter 15-digit GST (e.g. 24AAFCH6549H1ZG)"
-                  className="flex-1 bg-white uppercase font-mono tracking-wider text-sm h-11"
+                  className="flex-1 bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 uppercase font-mono tracking-wider text-sm h-11 text-gray-900 dark:text-slate-100"
                 />
                 <Button 
                   onClick={verifyLedgerGST} 
@@ -734,11 +734,11 @@ export default function InvoiceForm() {
                   {ledgerGstVerifying ? 'Verifying...' : 'Verify Tax ID'}
                 </Button>
               </div>
-              <span className="text-[10px] text-slate-400 mt-1.5 block">Verifying auto-populates business name, address, state, and pincode.</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-400 mt-1.5 block">Verifying auto-populates business name, address, state, and pincode.</span>
             </div>
 
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Billing / Client Name *</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Billing / Client Name *</Label>
               <Input 
                 value={ledgerData.name} 
                 onChange={(e) => setLedgerData({ ...ledgerData, name: e.target.value })} 
@@ -747,7 +747,7 @@ export default function InvoiceForm() {
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Contact Phone Number *</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Contact Phone Number *</Label>
               <Input 
                 value={ledgerData.phone} 
                 onChange={(e) => setLedgerData({ ...ledgerData, phone: e.target.value.replace(/\D/g, '') })} 
@@ -757,7 +757,7 @@ export default function InvoiceForm() {
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Email Address</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Email Address</Label>
               <Input 
                 value={ledgerData.email} 
                 onChange={(e) => setLedgerData({ ...ledgerData, email: e.target.value })} 
@@ -766,7 +766,7 @@ export default function InvoiceForm() {
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">PAN Card Number</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">PAN Card Number</Label>
               <Input 
                 value={ledgerData.panCard} 
                 onChange={(e) => setLedgerData({ ...ledgerData, panCard: e.target.value.toUpperCase() })} 
@@ -775,7 +775,7 @@ export default function InvoiceForm() {
               />
             </div>
             <div className="md:col-span-2">
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Full Street Address</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Full Street Address</Label>
               <Input 
                 value={ledgerData.address} 
                 onChange={(e) => setLedgerData({ ...ledgerData, address: e.target.value })} 
@@ -784,7 +784,7 @@ export default function InvoiceForm() {
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Postal Pincode</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Postal Pincode</Label>
               <Input 
                 value={ledgerData.pincode} 
                 onChange={(e) => setLedgerData({ ...ledgerData, pincode: e.target.value.replace(/\D/g, '') })} 
@@ -794,7 +794,7 @@ export default function InvoiceForm() {
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Registered State</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Registered State</Label>
               <Input 
                 value={ledgerData.state} 
                 onChange={(e) => setLedgerData({ ...ledgerData, state: e.target.value })} 
@@ -803,7 +803,7 @@ export default function InvoiceForm() {
               />
             </div>
           </div>
-          <DialogFooter className="border-t pt-4">
+          <DialogFooter className="border-t border-gray-200 dark:border-slate-800 pt-4">
             <Button variant="outline" onClick={() => setShowNewLedgerModal(false)} className="rounded-xl px-5">Cancel</Button>
             <Button onClick={handleCreateLedger} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl px-5">
               Register Profile
@@ -814,58 +814,58 @@ export default function InvoiceForm() {
 
       {/* View Ledger List Modal */}
       <Dialog open={showLedgerListModal} onOpenChange={setShowLedgerListModal}>
-        <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl p-6">
-          <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
-              <FileSpreadsheet className="w-6 h-6 text-indigo-600" /> Customer Ledger Directory
+        <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border border-gray-200 dark:border-slate-800">
+          <DialogHeader className="border-b border-gray-200 dark:border-slate-800 pb-4">
+            <DialogTitle className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <FileSpreadsheet className="w-6 h-6 text-indigo-600 dark:text-indigo-400" /> Customer Ledger Directory
             </DialogTitle>
-            <p className="text-xs text-slate-500 mt-1">Search, filter, and view historical customer billing profiles.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Search, filter, and view historical customer billing profiles.</p>
           </DialogHeader>
 
           {/* Filters Bar */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">Search Directory</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">Search Directory</Label>
               <Input 
                 type="text" 
                 value={ledgerSearchTerm} 
                 onChange={(e) => setLedgerSearchTerm(e.target.value)} 
                 placeholder="Search name, phone, or GST..." 
-                className="w-full bg-white text-sm h-10"
+                className="w-full bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-sm h-10 text-gray-900 dark:text-slate-100"
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">From Date</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">From Date</Label>
               <Input 
                 type="date" 
                 value={ledgerFilterFrom} 
                 onChange={(e) => setLedgerFilterFrom(e.target.value)} 
-                className="bg-white text-sm h-10"
+                className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-sm h-10 text-gray-900 dark:text-slate-100"
               />
             </div>
             <div>
-              <Label className="text-xs font-semibold text-slate-600 mb-1.5 block">To Date</Label>
+              <Label className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 block">To Date</Label>
               <Input 
                 type="date" 
                 value={ledgerFilterTo} 
                 onChange={(e) => setLedgerFilterTo(e.target.value)} 
-                className="bg-white text-sm h-10"
+                className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-sm h-10 text-gray-900 dark:text-slate-100"
               />
             </div>
           </div>
 
           {/* Directory Table */}
-          <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white shadow-sm">
+          <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 shadow-sm">
             <Table>
               <TableHeader>
-                <TableRow className="bg-slate-50 hover:bg-slate-50">
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">Created Date</TableHead>
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">Client Name</TableHead>
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">Phone Number</TableHead>
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">Email Address</TableHead>
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">GST Identification</TableHead>
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">PAN Card</TableHead>
-                  <TableHead className="font-bold text-slate-700 text-xs py-3.5">State</TableHead>
+                <TableRow className="bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/80">
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">Created Date</TableHead>
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">Client Name</TableHead>
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">Phone Number</TableHead>
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">Email Address</TableHead>
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">GST Identification</TableHead>
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">PAN Card</TableHead>
+                  <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs py-3.5">State</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -907,16 +907,16 @@ export default function InvoiceForm() {
                     }
 
                     return filtered.map((ledger, idx) => (
-                      <TableRow key={ledger._id || idx} className="hover:bg-slate-50/50 transition-colors">
-                        <TableCell className="text-xs text-slate-500 font-medium py-3.5 whitespace-nowrap">
+                      <TableRow key={ledger._id || idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-gray-100 dark:border-slate-800">
+                        <TableCell className="text-xs text-slate-500 dark:text-slate-400 font-medium py-3.5 whitespace-nowrap">
                           {ledger.createdAt ? new Date(ledger.createdAt).toLocaleDateString('en-GB') : '-'}
                         </TableCell>
-                        <TableCell className="text-sm font-semibold text-slate-800 py-3.5">{ledger.name}</TableCell>
-                        <TableCell className="text-sm text-slate-600 py-3.5">{ledger.phone || '-'}</TableCell>
-                        <TableCell className="text-sm text-slate-600 py-3.5">{ledger.email || '-'}</TableCell>
-                        <TableCell className="text-xs font-mono text-slate-700 bg-slate-50 px-2 py-1 rounded inline-block my-2.5">{ledger.gstNo || '-'}</TableCell>
-                        <TableCell className="text-xs font-mono text-slate-600 py-3.5">{ledger.panCard || '-'}</TableCell>
-                        <TableCell className="text-sm text-slate-600 py-3.5">{ledger.state || '-'}</TableCell>
+                        <TableCell className="text-sm font-semibold text-slate-800 dark:text-slate-100 py-3.5">{ledger.name}</TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-300 py-3.5">{ledger.phone || '-'}</TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-300 py-3.5">{ledger.email || '-'}</TableCell>
+                        <TableCell className="text-xs font-mono text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded inline-block my-2.5">{ledger.gstNo || '-'}</TableCell>
+                        <TableCell className="text-xs font-mono text-slate-600 dark:text-slate-400 py-3.5">{ledger.panCard || '-'}</TableCell>
+                        <TableCell className="text-sm text-slate-600 dark:text-slate-300 py-3.5">{ledger.state || '-'}</TableCell>
                       </TableRow>
                     ));
                   })()
@@ -924,8 +924,8 @@ export default function InvoiceForm() {
               </TableBody>
             </Table>
           </div>
-          <DialogFooter className="border-t pt-4">
-            <Button onClick={() => setShowLedgerListModal(false)} className="bg-slate-800 hover:bg-slate-900 text-white rounded-xl px-5">
+          <DialogFooter className="border-t border-gray-200 dark:border-slate-800 pt-4">
+            <Button onClick={() => setShowLedgerListModal(false)} className="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white rounded-xl px-5">
               Close
             </Button>
           </DialogFooter>

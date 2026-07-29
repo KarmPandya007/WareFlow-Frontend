@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Calendar, Plus, Eye, X, Scan, Trash2 } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -101,54 +101,9 @@ export default function AdvanceBookingPage() {
     }
   });
 
-  useEffect(() => {
-    const loadData = async () => {
-      await Promise.all([
-        fetchBookings(),
-        fetchBranches(),
-        fetchSalesPersons(),
-        fetchAvailableProducts()
-      ]);
-      setIsInitialLoading(false);
-    };
-    loadData();
-    
-    // Auto-fill salesperson if user is a salesperson
-    const role = localStorage.getItem('userRole')?.toLowerCase() || '';
-    setUserRole(role);
-    const userId = localStorage.getItem('userId');
-    if (role === 'salesperson' && userId) {
-      setFormData(prev => ({ ...prev, salesPerson: userId }));
-    }
-  }, []);
+  const isMountedRef = useRef(false);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (selectedBooking) setSelectedBooking(null);
-        if (showSerialScanner) {
-          setShowSerialScanner(false);
-          setScanningProductId(null);
-          setScannedValue("");
-        }
-        if (showCheckCodeScanner) {
-          setShowCheckCodeScanner(false);
-          setScanningProductId(null);
-          setScannedValue("");
-        }
-        if (showModelScanner) {
-          setShowModelScanner(false);
-          setScanningProductId(null);
-          setScannedValue("");
-        }
-        if (deleteConfirmId) setDeleteConfirmId(null);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedBooking, showSerialScanner, showCheckCodeScanner, showModelScanner, deleteConfirmId]);
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -164,16 +119,34 @@ export default function AdvanceBookingPage() {
     } catch (err) {
       console.error(err);
     }
-  };
-
-  useEffect(() => {
-    if (isInitialLoading) return;
-    fetchBookings();
   }, [currentPage, statusFilter]);
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [statusFilter]);
+    const loadData = async () => {
+      await Promise.all([
+        fetchBookings(),
+        fetchBranches(),
+        fetchSalesPersons(),
+        fetchAvailableProducts()
+      ]);
+      setIsInitialLoading(false);
+      isMountedRef.current = true;
+    };
+    loadData();
+    
+    // Auto-fill salesperson if user is a salesperson
+    const role = localStorage.getItem('userRole')?.toLowerCase() || '';
+    setUserRole(role);
+    const userId = localStorage.getItem('userId');
+    if (role === 'salesperson' && userId) {
+      setFormData(prev => ({ ...prev, salesPerson: userId }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isMountedRef.current || isInitialLoading) return;
+    fetchBookings();
+  }, [currentPage, statusFilter, fetchBookings]);
 
   const fetchBranches = async () => {
     try {
@@ -468,24 +441,24 @@ export default function AdvanceBookingPage() {
     <div className="animate-pulse space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-200 rounded"></div>
-          <div className="h-8 bg-gray-200 rounded w-48"></div>
+          <div className="w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded"></div>
+          <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-48"></div>
         </div>
-        <div className="h-10 bg-gray-200 rounded w-32"></div>
+        <div className="h-10 bg-gray-200 dark:bg-slate-700 rounded w-32"></div>
       </div>
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b">
+      <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow">
+        <div className="p-4 border-b border-gray-200 dark:border-slate-800">
           <div className="grid grid-cols-8 gap-4">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded"></div>
+              <div key={i} className="h-4 bg-gray-200 dark:bg-slate-700 rounded"></div>
             ))}
           </div>
         </div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="p-4 border-b">
+          <div key={i} className="p-4 border-b border-gray-200 dark:border-slate-800">
             <div className="grid grid-cols-8 gap-4">
               {[...Array(8)].map((_, j) => (
-                <div key={j} className="h-4 bg-gray-100 rounded"></div>
+                <div key={j} className="h-4 bg-gray-100 dark:bg-slate-800 rounded"></div>
               ))}
             </div>
           </div>
@@ -497,18 +470,14 @@ export default function AdvanceBookingPage() {
   return (
     <AdminLayout>
       <div className="p-6">
-        {isInitialLoading ? (
-          <SkeletonLoader />
-        ) : (
-          <>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Advance Booking</h1>
+            <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-slate-100">Advance Booking</h1>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-40 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -527,45 +496,49 @@ export default function AdvanceBookingPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow">
+        {isInitialLoading ? (
+          <SkeletonLoader />
+        ) : (
+          <>
+            <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow">
           {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Products</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Advance</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Mode</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Delivery Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Products</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Advance</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Payment Mode</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Delivery Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-slate-800">
                 {bookings.map((booking: any) => (
-                  <tr key={booking._id}>
-                    <td className="px-6 py-4 text-sm">
+                  <tr key={booking._id} className="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-100">
                       <div>{booking.customerName}</div>
-                      <div className="text-gray-500">{booking.mobile}</div>
+                      <div className="text-gray-500 dark:text-slate-400">{booking.mobile}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-slate-300">
                       {booking.products?.map((p: any, i: number) => (
                         <div key={i}>{p.model || p.serialNumber}</div>
                       ))}
                     </td>
-                    <td className="px-6 py-4 text-sm">₹{booking.totalAmount?.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-sm">₹{booking.advanceAmount?.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-100 font-medium">₹{booking.totalAmount?.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-100 font-medium">₹{booking.advanceAmount?.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-slate-300">
                       {booking.paymentMode?.map((p: any, i: number) => (
                         <div key={i}>{p.mode}: ₹{p.amount?.toLocaleString()}</div>
                       ))}
                     </td>
-                    <td className="px-6 py-4 text-sm">{formatDate(booking.deliveryDate)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-slate-300">{formatDate(booking.deliveryDate)}</td>
                     <td className="px-6 py-4 text-sm">
                       <Select value={booking.status} onValueChange={(v) => handleStatusUpdate(booking._id, v)}>
-                        <SelectTrigger className="w-32">
+                        <SelectTrigger className="w-32 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -580,7 +553,7 @@ export default function AdvanceBookingPage() {
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={() => setSelectedBooking(booking)}
-                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                          className="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />
@@ -588,7 +561,7 @@ export default function AdvanceBookingPage() {
                         {userRole === 'admin' && (
                           <button 
                             onClick={() => setDeleteConfirmId(booking._id)}
-                            className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                            className="p-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
                             title="Delete Booking"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -603,16 +576,16 @@ export default function AdvanceBookingPage() {
           </div>
 
           {/* Mobile Cards */}
-          <div className="md:hidden divide-y divide-gray-200">
+          <div className="md:hidden divide-y divide-gray-200 dark:divide-slate-800">
             {bookings.map((booking: any) => (
-              <div key={booking._id} className="p-4 space-y-3">
+              <div key={booking._id} className="p-4 space-y-3 hover:bg-gray-50 dark:hover:bg-slate-800/50">
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="font-semibold text-gray-900">{booking.customerName}</div>
-                    <div className="text-sm text-gray-500">{booking.mobile}</div>
+                    <div className="font-semibold text-gray-900 dark:text-slate-100">{booking.customerName}</div>
+                    <div className="text-sm text-gray-500 dark:text-slate-400">{booking.mobile}</div>
                   </div>
                   <Select value={booking.status} onValueChange={(v) => handleStatusUpdate(booking._id, v)}>
-                    <SelectTrigger className="w-28 h-8 text-xs">
+                    <SelectTrigger className="w-28 h-8 text-xs bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -625,22 +598,22 @@ export default function AdvanceBookingPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Amount:</span>
-                    <span className="ml-1 font-medium">₹{booking.totalAmount?.toLocaleString()}</span>
+                    <span className="text-gray-500 dark:text-slate-400">Amount:</span>
+                    <span className="ml-1 font-medium text-gray-900 dark:text-slate-100">₹{booking.totalAmount?.toLocaleString()}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Advance:</span>
-                    <span className="ml-1 font-medium">₹{booking.advanceAmount?.toLocaleString()}</span>
+                    <span className="text-gray-500 dark:text-slate-400">Advance:</span>
+                    <span className="ml-1 font-medium text-gray-900 dark:text-slate-100">₹{booking.advanceAmount?.toLocaleString()}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-gray-500">Delivery:</span>
-                    <span className="ml-1">{formatDate(booking.deliveryDate)}</span>
+                    <span className="text-gray-500 dark:text-slate-400">Delivery:</span>
+                    <span className="ml-1 text-gray-700 dark:text-slate-200">{formatDate(booking.deliveryDate)}</span>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <button 
                     onClick={() => setSelectedBooking(booking)}
-                    className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                    className="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
                     title="View Details"
                   >
                     <Eye className="w-4 h-4" />
@@ -648,7 +621,7 @@ export default function AdvanceBookingPage() {
                   {userRole === 'admin' && (
                     <button 
                       onClick={() => setDeleteConfirmId(booking._id)}
-                      className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                      className="p-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
                       title="Delete Booking"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -661,9 +634,9 @@ export default function AdvanceBookingPage() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="p-4 bg-gray-50 border-t flex items-center justify-between rounded-b-lg">
-              <span className="text-sm text-gray-500 font-medium">
-                Page <span className="font-semibold text-gray-900">{currentPage}</span> of <span className="font-semibold text-gray-900">{totalPages}</span>
+            <div className="p-4 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-200 dark:border-slate-800 flex items-center justify-between rounded-b-lg">
+              <span className="text-sm text-gray-500 dark:text-slate-400 font-medium">
+                Page <span className="font-semibold text-gray-900 dark:text-slate-100">{currentPage}</span> of <span className="font-semibold text-gray-900 dark:text-slate-100">{totalPages}</span>
               </span>
               <div className="flex gap-2">
                 <Button
@@ -671,6 +644,7 @@ export default function AdvanceBookingPage() {
                   size="sm"
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
+                  className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   Previous
                 </Button>
@@ -679,6 +653,7 @@ export default function AdvanceBookingPage() {
                   size="sm"
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
+                  className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   Next
                 </Button>
@@ -703,19 +678,19 @@ export default function AdvanceBookingPage() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+                className="relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col text-gray-900 dark:text-slate-100"
               >
                 {/* Modal Header */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+                <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">Booking Details</h2>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Booking Details</h2>
                     {selectedBooking.bookingId && (
-                      <p className="text-sm text-gray-500 mt-1">Booking ID: <span className="font-mono font-semibold text-blue-600">{selectedBooking.bookingId}</span></p>
+                      <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Booking ID: <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{selectedBooking.bookingId}</span></p>
                     )}
                   </div>
                   <button
                     onClick={() => setSelectedBooking(null)}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -727,75 +702,75 @@ export default function AdvanceBookingPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Company Information */}
                     <div className="space-y-4">
-                      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                         Company Information
                       </h3>
-                      <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-3">
+                      <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Company</span>
-                          <span className="text-base font-medium text-gray-900">{selectedBooking.companyName}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Company</span>
+                          <span className="text-base font-medium text-gray-900 dark:text-slate-100">{selectedBooking.companyName}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <span className="text-xs font-semibold text-gray-500 uppercase block">Branch</span>
-                            <span className="text-sm text-gray-700">{selectedBooking.branch?.name || selectedBooking.branch?.branchName || 'N/A'}</span>
+                            <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Branch</span>
+                            <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.branch?.name || selectedBooking.branch?.branchName || 'N/A'}</span>
                             {selectedBooking.branch?.code && (
-                              <span className="text-xs text-gray-500"> ({selectedBooking.branch.code})</span>
+                              <span className="text-xs text-gray-500 dark:text-slate-400"> ({selectedBooking.branch.code})</span>
                             )}
                           </div>
                           <div>
-                            <span className="text-xs font-semibold text-gray-500 uppercase block">Sales Type</span>
-                            <span className="text-sm text-gray-700">{selectedBooking.salesType}</span>
+                            <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Sales Type</span>
+                            <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.salesType}</span>
                           </div>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Sales Person</span>
-                          <span className="text-sm text-gray-700">
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Sales Person</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-300">
                             {selectedBooking.salesPerson?.firstName || selectedBooking.salesPerson?.name || 'N/A'}
                             {selectedBooking.salesPerson?.lastName && ` ${selectedBooking.salesPerson.lastName}`}
                           </span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Date</span>
-                          <span className="text-sm text-gray-700">{formatDateTime(selectedBooking.date)}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Date</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-300">{formatDateTime(selectedBooking.date)}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Customer Information */}
                     <div className="space-y-4">
-                      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         Customer Information
                       </h3>
-                      <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-3">
+                      <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Name</span>
-                          <span className="text-base font-medium text-gray-900">{selectedBooking.customerName}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Name</span>
+                          <span className="text-base font-medium text-gray-900 dark:text-slate-100">{selectedBooking.customerName}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <span className="text-xs font-semibold text-gray-500 uppercase block">Mobile</span>
-                            <span className="text-sm text-gray-700">{selectedBooking.mobile}</span>
+                            <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Mobile</span>
+                            <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.mobile}</span>
                           </div>
                           <div>
-                            <span className="text-xs font-semibold text-gray-500 uppercase block">Email</span>
-                            <span className="text-sm text-gray-700 truncate" title={selectedBooking.email}>{selectedBooking.email}</span>
+                            <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Email</span>
+                            <span className="text-sm text-gray-700 dark:text-slate-300 truncate" title={selectedBooking.email}>{selectedBooking.email}</span>
                           </div>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Pin Code</span>
-                          <span className="text-sm text-gray-700">{selectedBooking.pinCode}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Pin Code</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.pinCode}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Address</span>
-                          <span className="text-sm text-gray-700">{selectedBooking.address}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Address</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.address}</span>
                         </div>
                         {selectedBooking.referralSource && (
                           <div>
-                            <span className="text-xs font-semibold text-gray-500 uppercase block">Referral Source</span>
-                            <span className="text-sm text-gray-700">{selectedBooking.referralSource}</span>
+                            <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Referral Source</span>
+                            <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.referralSource}</span>
                           </div>
                         )}
                       </div>
@@ -804,13 +779,13 @@ export default function AdvanceBookingPage() {
 
                   {/* Products */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                       Products
                     </h3>
-                    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                    <div className="border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
                       <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-gray-500 font-semibold border-b border-gray-200">
+                        <thead className="bg-gray-50 dark:bg-slate-800/60 text-gray-500 dark:text-slate-400 font-semibold border-b border-gray-200 dark:border-slate-800">
                           <tr>
                             <th className="px-6 py-3">Model</th>
                             <th className="px-6 py-3">Serial Number</th>
@@ -818,13 +793,13 @@ export default function AdvanceBookingPage() {
                             <th className="px-6 py-3 text-right">Supported Amount</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                           {selectedBooking.products?.map((p: any, i: number) => (
-                            <tr key={i} className="hover:bg-gray-50/50">
-                              <td className="px-6 py-3 font-medium text-gray-900">{p.model}</td>
-                              <td className="px-6 py-3 text-gray-600">{p.serialNumber}</td>
-                              <td className="px-6 py-3 text-gray-600">{p.category}</td>
-                              <td className="px-6 py-3 text-right font-medium text-gray-900">₹{(p.supportedAmount || p.price || 0).toLocaleString()}</td>
+                            <tr key={i} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/50">
+                              <td className="px-6 py-3 font-medium text-gray-900 dark:text-slate-100">{p.model}</td>
+                              <td className="px-6 py-3 text-gray-600 dark:text-slate-300">{p.serialNumber}</td>
+                              <td className="px-6 py-3 text-gray-600 dark:text-slate-300">{p.category}</td>
+                              <td className="px-6 py-3 text-right font-medium text-gray-900 dark:text-slate-100">₹{(p.supportedAmount || p.price || 0).toLocaleString()}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -834,66 +809,66 @@ export default function AdvanceBookingPage() {
 
                   {/* Payment Information */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                       Payment Information
                     </h3>
-                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-4">
+                    <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
                       <div className="grid grid-cols-3 gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Total Amount</span>
-                          <span className="text-lg font-bold text-gray-900">₹{selectedBooking.totalAmount?.toLocaleString()}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Total Amount</span>
+                          <span className="text-lg font-bold text-gray-900 dark:text-slate-100">₹{selectedBooking.totalAmount?.toLocaleString()}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Advance Amount</span>
-                          <span className="text-lg font-bold text-green-600">₹{selectedBooking.advanceAmount?.toLocaleString()}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Advance Amount</span>
+                          <span className="text-lg font-bold text-green-600 dark:text-green-400">₹{selectedBooking.advanceAmount?.toLocaleString()}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Remaining Amount</span>
-                          <span className="text-lg font-bold text-red-600">₹{selectedBooking.remainingAmount?.toLocaleString()}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Remaining Amount</span>
+                          <span className="text-lg font-bold text-red-600 dark:text-red-400">₹{selectedBooking.remainingAmount?.toLocaleString()}</span>
                         </div>
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block mb-2">Payment Modes</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block mb-2">Payment Modes</span>
                         <div className="space-y-3">
                           {selectedBooking.paymentMode?.map((p: any, i: number) => (
-                            <div key={i} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div key={i} className="p-4 bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800 shadow-sm">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="font-bold text-gray-900 text-base">{p.mode}</span>
-                                <span className="font-bold text-blue-600 text-lg">₹{p.amount?.toLocaleString()}</span>
+                                <span className="font-bold text-gray-900 dark:text-slate-100 text-base">{p.mode}</span>
+                                <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">₹{p.amount?.toLocaleString()}</span>
                               </div>
                               {p.mode === 'Bank' && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                  {p.bankType && <div className="flex justify-between"><span className="text-gray-500">Bank Type:</span><span className="text-gray-700 font-medium">{p.bankType}</span></div>}
-                                  {p.utrNumber && <div className="flex justify-between"><span className="text-gray-500">UTR Number:</span><span className="text-gray-700 font-medium">{p.utrNumber}</span></div>}
-                                  {p.chequeNumber && <div className="flex justify-between"><span className="text-gray-500">Cheque Number:</span><span className="text-gray-700 font-medium">{p.chequeNumber}</span></div>}
+                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                  {p.bankType && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Bank Type:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.bankType}</span></div>}
+                                  {p.utrNumber && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">UTR Number:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.utrNumber}</span></div>}
+                                  {p.chequeNumber && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Cheque Number:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.chequeNumber}</span></div>}
                                 </div>
                               )}
                               {p.mode === 'UPI' && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                  {p.upiProvider && <div className="flex justify-between"><span className="text-gray-500">UPI Provider:</span><span className="text-gray-700 font-medium">{p.upiProvider}</span></div>}
-                                  {p.upiTransactionId && <div className="flex justify-between"><span className="text-gray-500">Transaction ID:</span><span className="text-gray-700 font-medium">{p.upiTransactionId}</span></div>}
+                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                  {p.upiProvider && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">UPI Provider:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.upiProvider}</span></div>}
+                                  {p.upiTransactionId && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Transaction ID:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.upiTransactionId}</span></div>}
                                 </div>
                               )}
                               {p.mode === 'Machine' && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                  {p.machineProvider && <div className="flex justify-between"><span className="text-gray-500">Machine Provider:</span><span className="text-gray-700 font-medium">{p.machineProvider}</span></div>}
-                                  {p.machineCardType && <div className="flex justify-between"><span className="text-gray-500">Card Type:</span><span className="text-gray-700 font-medium">{p.machineCardType}</span></div>}
-                                  {p.machineCardLast4Digits && <div className="flex justify-between"><span className="text-gray-500">Card Last 4 Digits:</span><span className="text-gray-700 font-medium">**** {p.machineCardLast4Digits}</span></div>}
-                                  {p.machineIdProofType && <div className="flex justify-between"><span className="text-gray-500">ID Proof Type:</span><span className="text-gray-700 font-medium">{p.machineIdProofType}</span></div>}
-                                  {p.machineIdProofNumber && <div className="flex justify-between"><span className="text-gray-500">ID Proof Number:</span><span className="text-gray-700 font-medium">{p.machineIdProofNumber}</span></div>}
-                                  {p.machineTransactionId && <div className="flex justify-between"><span className="text-gray-500">Transaction ID:</span><span className="text-gray-700 font-medium">{p.machineTransactionId}</span></div>}
+                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                  {p.machineProvider && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Machine Provider:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.machineProvider}</span></div>}
+                                  {p.machineCardType && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Card Type:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.machineCardType}</span></div>}
+                                  {p.machineCardLast4Digits && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Card Last 4 Digits:</span><span className="text-gray-700 dark:text-slate-200 font-medium">**** {p.machineCardLast4Digits}</span></div>}
+                                  {p.machineIdProofType && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">ID Proof Type:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.machineIdProofType}</span></div>}
+                                  {p.machineIdProofNumber && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">ID Proof Number:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.machineIdProofNumber}</span></div>}
+                                  {p.machineTransactionId && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Transaction ID:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.machineTransactionId}</span></div>}
                                 </div>
                               )}
                               {p.mode === 'Bajaj Finance' && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                  {p.loanAmount && <div className="flex justify-between"><span className="text-gray-500">Loan Amount:</span><span className="text-gray-700 font-medium">₹{p.loanAmount?.toLocaleString()}</span></div>}
-                                  {p.loanId && <div className="flex justify-between"><span className="text-gray-500">Loan ID:</span><span className="text-gray-700 font-medium">{p.loanId}</span></div>}
+                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                  {p.loanAmount && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Loan Amount:</span><span className="text-gray-700 dark:text-slate-200 font-medium">₹{p.loanAmount?.toLocaleString()}</span></div>}
+                                  {p.loanId && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Loan ID:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.loanId}</span></div>}
                                 </div>
                               )}
                               {p.mode === 'Brand Order' && (
-                                <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                  {p.brandOrderType && <div className="flex justify-between"><span className="text-gray-500">Brand Order Type:</span><span className="text-gray-700 font-medium">{p.brandOrderType}</span></div>}
+                                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                  {p.brandOrderType && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Brand Order Type:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{p.brandOrderType}</span></div>}
                                 </div>
                               )}
                             </div>
@@ -905,29 +880,29 @@ export default function AdvanceBookingPage() {
 
                   {/* Delivery Information */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                       Delivery Information
                     </h3>
-                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-3">
+                    <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Delivery Date</span>
-                          <span className="text-sm text-gray-700">{formatDate(selectedBooking.deliveryDate)}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Delivery Date</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-300">{formatDate(selectedBooking.deliveryDate)}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Status</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Status</span>
                           <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                            selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                            selectedBooking.status === 'confirmed' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                            selectedBooking.status === 'delivered' ? 'bg-green-100 text-green-800 border border-green-200' :
-                            'bg-red-100 text-red-800 border border-red-200'
+                            selectedBooking.status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-900' :
+                            selectedBooking.status === 'confirmed' ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900' :
+                            selectedBooking.status === 'delivered' ? 'bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-900' :
+                            'bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-900'
                           }`}>{selectedBooking.status}</span>
                         </div>
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Delivery Address</span>
-                        <span className="text-sm text-gray-700">{selectedBooking.deliveryAddress}</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Delivery Address</span>
+                        <span className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.deliveryAddress}</span>
                       </div>
                     </div>
                   </div>
@@ -935,12 +910,12 @@ export default function AdvanceBookingPage() {
                   {/* Notes */}
                   {selectedBooking.notes && (
                     <div className="space-y-4">
-                      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
                         Notes
                       </h3>
-                      <div className="bg-gray-50 p-5 rounded-xl border border-gray-100">
-                        <p className="text-sm text-gray-700">{selectedBooking.notes}</p>
+                      <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800">
+                        <p className="text-sm text-gray-700 dark:text-slate-300">{selectedBooking.notes}</p>
                       </div>
                     </div>
                   )}
@@ -1006,11 +981,11 @@ export default function AdvanceBookingPage() {
 
         {/* Form Modal - PART 1 */}
         {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl my-8 max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b sticky top-0 bg-white z-10">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+            <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow-2xl w-full max-w-6xl my-8 max-h-[90vh] overflow-y-auto text-gray-900 dark:text-slate-100">
+              <div className="p-6 border-b border-gray-200 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-bold">New Advance Booking</h2>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">New Advance Booking</h2>
                   <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); resetForm(); }}><X className="w-5 h-5" /></Button>
                 </div>
               </div>
@@ -1065,63 +1040,63 @@ export default function AdvanceBookingPage() {
                     <Label className="text-base font-semibold">Payment Mode (Select and enter amount)</Label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* Cash */}
-                      <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-200">
+                      <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={formData._paymentModes.Cash.selected} onChange={(e) => handlePaymentModeChange('Cash', e.target.checked)} className="w-4 h-4" />
-                          <Label className="font-semibold">Cash</Label>
+                          <Label className="font-semibold text-gray-900 dark:text-slate-100">Cash</Label>
                         </div>
                         {formData._paymentModes.Cash.selected && (
-                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.Cash.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Cash: { ...prev._paymentModes.Cash, amount: e.target.value } } }))} className="bg-white" /><p className="text-xs text-red-600">Enter a valid amount</p></>
+                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.Cash.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Cash: { ...prev._paymentModes.Cash, amount: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><p className="text-xs text-red-600">Enter a valid amount</p></>
                         )}
                       </div>
                       {/* Bank */}
-                      <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-200">
+                      <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={formData._paymentModes.Bank.selected} onChange={(e) => handlePaymentModeChange('Bank', e.target.checked)} className="w-4 h-4" />
-                          <Label className="font-semibold">Bank</Label>
+                          <Label className="font-semibold text-gray-900 dark:text-slate-100">Bank</Label>
                         </div>
                         {formData._paymentModes.Bank.selected && (
-                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.Bank.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, amount: e.target.value } } }))} className="bg-white" /><p className="text-xs text-red-600">Enter a valid amount</p><Select value={formData._paymentModes.Bank.bankType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, bankType: v } } }))}><SelectTrigger className="bg-white"><SelectValue placeholder="Select bank type" /></SelectTrigger><SelectContent><SelectItem value="NEFT">NEFT</SelectItem><SelectItem value="RTGS">RTGS</SelectItem><SelectItem value="IMPS">IMPS</SelectItem><SelectItem value="Net Banking">Net Banking</SelectItem><SelectItem value="Cheque">Cheque</SelectItem></SelectContent></Select>{formData._paymentModes.Bank.bankType === 'Cheque' ? <Input placeholder="Cheque Number" value={formData._paymentModes.Bank.chequeNumber} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, chequeNumber: e.target.value } } }))} className="bg-white" /> : <Input placeholder="UTR Number" value={formData._paymentModes.Bank.utrNumber} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, utrNumber: e.target.value } } }))} className="bg-white" />}</>
+                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.Bank.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, amount: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><p className="text-xs text-red-600">Enter a valid amount</p><Select value={formData._paymentModes.Bank.bankType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, bankType: v } } }))}><SelectTrigger className="bg-white dark:bg-slate-900"><SelectValue placeholder="Select bank type" /></SelectTrigger><SelectContent><SelectItem value="NEFT">NEFT</SelectItem><SelectItem value="RTGS">RTGS</SelectItem><SelectItem value="IMPS">IMPS</SelectItem><SelectItem value="Net Banking">Net Banking</SelectItem><SelectItem value="Cheque">Cheque</SelectItem></SelectContent></Select>{formData._paymentModes.Bank.bankType === 'Cheque' ? <Input placeholder="Cheque Number" value={formData._paymentModes.Bank.chequeNumber} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, chequeNumber: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /> : <Input placeholder="UTR Number" value={formData._paymentModes.Bank.utrNumber} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Bank: { ...prev._paymentModes.Bank, utrNumber: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" />}</>
                         )}
                       </div>
                       {/* UPI */}
-                      <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-200">
+                      <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={formData._paymentModes.UPI.selected} onChange={(e) => handlePaymentModeChange('UPI', e.target.checked)} className="w-4 h-4" />
-                          <Label className="font-semibold">UPI</Label>
+                          <Label className="font-semibold text-gray-900 dark:text-slate-100">UPI</Label>
                         </div>
                         {formData._paymentModes.UPI.selected && (
-                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.UPI.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, UPI: { ...prev._paymentModes.UPI, amount: e.target.value } } }))} className="bg-white" /><p className="text-xs text-red-600">Enter a valid amount</p><Input placeholder="PhonePe Transaction ID" value={formData._paymentModes.UPI.upiTransactionId} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, UPI: { ...prev._paymentModes.UPI, upiTransactionId: e.target.value } } }))} className="bg-white" /></>
+                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.UPI.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, UPI: { ...prev._paymentModes.UPI, amount: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><p className="text-xs text-red-600">Enter a valid amount</p><Input placeholder="PhonePe Transaction ID" value={formData._paymentModes.UPI.upiTransactionId} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, UPI: { ...prev._paymentModes.UPI, upiTransactionId: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /></>
                         )}
                       </div>
                       {/* Machine */}
-                      <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-200">
+                      <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={formData._paymentModes.Machine.selected} onChange={(e) => handlePaymentModeChange('Machine', e.target.checked)} className="w-4 h-4" />
-                          <Label className="font-semibold">Machine</Label>
+                          <Label className="font-semibold text-gray-900 dark:text-slate-100">Machine</Label>
                         </div>
                         {formData._paymentModes.Machine.selected && (
-                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.Machine.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, amount: e.target.value } } }))} className="bg-white" /><Select value={formData._paymentModes.Machine.machineProvider} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineProvider: v } } }))}><SelectTrigger className="bg-white"><SelectValue placeholder="Select machine" /></SelectTrigger><SelectContent><SelectItem value="Pinelabs">Pinelabs</SelectItem><SelectItem value="Paytm">Paytm</SelectItem></SelectContent></Select><Select value={formData._paymentModes.Machine.machineCardType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineCardType: v } } }))}><SelectTrigger className="bg-white"><SelectValue placeholder="Card type" /></SelectTrigger><SelectContent><SelectItem value="Credit Card">Credit Card</SelectItem><SelectItem value="Debit Card">Debit Card</SelectItem></SelectContent></Select><Input placeholder="Last 4 digits" value={formData._paymentModes.Machine.machineCardLast4Digits} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineCardLast4Digits: e.target.value.replace(/\D/g, '').slice(0, 4) } } }))} maxLength={4} className="bg-white" /><Select value={formData._paymentModes.Machine.machineIdProofType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineIdProofType: v } } }))}><SelectTrigger className="bg-white"><SelectValue placeholder="ID proof" /></SelectTrigger><SelectContent><SelectItem value="Aadhaar">Aadhaar</SelectItem><SelectItem value="PAN">PAN</SelectItem></SelectContent></Select>                                <Input placeholder={formData._paymentModes.Machine.machineIdProofType === 'Aadhaar' ? 'Enter 12-digit Aadhaar' : formData._paymentModes.Machine.machineIdProofType === 'PAN' ? 'Enter 10-character PAN' : 'ID proof number'} value={formData._paymentModes.Machine.machineIdProofNumber} onChange={(e) => { let value = e.target.value; if (formData._paymentModes.Machine.machineIdProofType === 'Aadhaar') { value = value.replace(/\D/g, '').slice(0, 12); } else if (formData._paymentModes.Machine.machineIdProofType === 'PAN') { value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 10); } setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineIdProofNumber: value } } })); }} maxLength={formData._paymentModes.Machine.machineIdProofType === 'Aadhaar' ? 12 : formData._paymentModes.Machine.machineIdProofType === 'PAN' ? 10 : undefined} className="bg-white" /><Input placeholder="Transaction ID" value={formData._paymentModes.Machine.machineTransactionId} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineTransactionId: e.target.value } } }))} className="bg-white" /></>
+                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes.Machine.amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, amount: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><Select value={formData._paymentModes.Machine.machineProvider} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineProvider: v } } }))}><SelectTrigger className="bg-white dark:bg-slate-900"><SelectValue placeholder="Select machine" /></SelectTrigger><SelectContent><SelectItem value="Pinelabs">Pinelabs</SelectItem><SelectItem value="Paytm">Paytm</SelectItem></SelectContent></Select><Select value={formData._paymentModes.Machine.machineCardType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineCardType: v } } }))}><SelectTrigger className="bg-white dark:bg-slate-900"><SelectValue placeholder="Card type" /></SelectTrigger><SelectContent><SelectItem value="Credit Card">Credit Card</SelectItem><SelectItem value="Debit Card">Debit Card</SelectItem></SelectContent></Select><Input placeholder="Last 4 digits" value={formData._paymentModes.Machine.machineCardLast4Digits} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineCardLast4Digits: e.target.value.replace(/\D/g, '').slice(0, 4) } } }))} maxLength={4} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><Select value={formData._paymentModes.Machine.machineIdProofType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineIdProofType: v } } }))}><SelectTrigger className="bg-white dark:bg-slate-900"><SelectValue placeholder="ID proof" /></SelectTrigger><SelectContent><SelectItem value="Aadhaar">Aadhaar</SelectItem><SelectItem value="PAN">PAN</SelectItem></SelectContent></Select>                                <Input placeholder={formData._paymentModes.Machine.machineIdProofType === 'Aadhaar' ? 'Enter 12-digit Aadhaar' : formData._paymentModes.Machine.machineIdProofType === 'PAN' ? 'Enter 10-character PAN' : 'ID proof number'} value={formData._paymentModes.Machine.machineIdProofNumber} onChange={(e) => { let value = e.target.value; if (formData._paymentModes.Machine.machineIdProofType === 'Aadhaar') { value = value.replace(/\D/g, '').slice(0, 12); } else if (formData._paymentModes.Machine.machineIdProofType === 'PAN') { value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 10); } setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineIdProofNumber: value } } })); }} maxLength={formData._paymentModes.Machine.machineIdProofType === 'Aadhaar' ? 12 : formData._paymentModes.Machine.machineIdProofType === 'PAN' ? 10 : undefined} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><Input placeholder="Transaction ID" value={formData._paymentModes.Machine.machineTransactionId} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, Machine: { ...prev._paymentModes.Machine, machineTransactionId: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /></>
                         )}
                       </div>
                       {/* Bajaj Finance */}
-                      <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-200">
+                      <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={formData._paymentModes['Bajaj Finance'].selected} onChange={(e) => handlePaymentModeChange('Bajaj Finance', e.target.checked)} className="w-4 h-4" />
-                          <Label className="font-semibold">Bajaj Finance</Label>
+                          <Label className="font-semibold text-gray-900 dark:text-slate-100">Bajaj Finance</Label>
                         </div>
                         {formData._paymentModes['Bajaj Finance'].selected && (
-                          <><Input type="number" placeholder="Loan Amount" value={formData._paymentModes['Bajaj Finance'].loanAmount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Bajaj Finance': { ...prev._paymentModes['Bajaj Finance'], loanAmount: e.target.value, amount: e.target.value } } }))} className="bg-white" /><Input placeholder="Loan ID" value={formData._paymentModes['Bajaj Finance'].loanId} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Bajaj Finance': { ...prev._paymentModes['Bajaj Finance'], loanId: e.target.value } } }))} className="bg-white" /></>
+                          <><Input type="number" placeholder="Loan Amount" value={formData._paymentModes['Bajaj Finance'].loanAmount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Bajaj Finance': { ...prev._paymentModes['Bajaj Finance'], loanAmount: e.target.value, amount: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><Input placeholder="Loan ID" value={formData._paymentModes['Bajaj Finance'].loanId} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Bajaj Finance': { ...prev._paymentModes['Bajaj Finance'], loanId: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /></>
                         )}
                       </div>
                       {/* Brand Order */}
-                      <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-200">
+                      <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800/60">
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={formData._paymentModes['Brand Order'].selected} onChange={(e) => handlePaymentModeChange('Brand Order', e.target.checked)} className="w-4 h-4" />
-                          <Label className="font-semibold">Brand Order</Label>
+                          <Label className="font-semibold text-gray-900 dark:text-slate-100">Brand Order</Label>
                         </div>
                         {formData._paymentModes['Brand Order'].selected && (
-                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes['Brand Order'].amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Brand Order': { ...prev._paymentModes['Brand Order'], amount: e.target.value } } }))} className="bg-white" /><Select value={formData._paymentModes['Brand Order'].brandOrderType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Brand Order': { ...prev._paymentModes['Brand Order'], brandOrderType: v } } }))}><SelectTrigger className="bg-white"><SelectValue placeholder="Select brand order type" /></SelectTrigger><SelectContent><SelectItem value="Lenovo OMO">Lenovo OMO</SelectItem><SelectItem value="Asus Eshop">Asus Eshop</SelectItem></SelectContent></Select></>
+                          <><Input type="number" placeholder="Enter amount" value={formData._paymentModes['Brand Order'].amount} onChange={(e) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Brand Order': { ...prev._paymentModes['Brand Order'], amount: e.target.value } } }))} className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100" /><Select value={formData._paymentModes['Brand Order'].brandOrderType} onValueChange={(v) => setFormData(prev => ({ ...prev, _paymentModes: { ...prev._paymentModes, 'Brand Order': { ...prev._paymentModes['Brand Order'], brandOrderType: v } } }))}><SelectTrigger className="bg-white dark:bg-slate-900"><SelectValue placeholder="Select brand order type" /></SelectTrigger><SelectContent><SelectItem value="Lenovo OMO">Lenovo OMO</SelectItem><SelectItem value="Asus Eshop">Asus Eshop</SelectItem></SelectContent></Select></>
                         )}
                       </div>
                     </div>

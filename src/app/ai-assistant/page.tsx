@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { getApiUrl } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Sparkles, SendHorizonal, RotateCcw, Bot, User, Loader2 } from "lucide-react";
 
 interface Message {
@@ -143,13 +144,13 @@ export default function AiAssistantPage() {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">WareFlow AI</h1>
-              <p className="text-xs text-gray-400">Analytics assistant · Read-only access</p>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">WareFlow AI</h1>
+              <p className="text-xs text-gray-400 dark:text-slate-400">Analytics assistant · Read-only access</p>
             </div>
           </div>
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-500 dark:text-slate-300 hover:text-gray-700 dark:hover:text-slate-100 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             New Chat
@@ -163,7 +164,7 @@ export default function AiAssistantPage() {
               <button
                 key={s}
                 onClick={() => sendMessage(s)}
-                className="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-full transition-all"
+                className="px-3 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-100 dark:border-indigo-800/80 rounded-full transition-all"
               >
                 {s}
               </button>
@@ -172,7 +173,7 @@ export default function AiAssistantPage() {
         )}
 
         {/* Chat area */}
-        <div className="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-4 space-y-4">
           {messages.map((msg, i) => (
             <div
               key={i}
@@ -199,18 +200,41 @@ export default function AiAssistantPage() {
                   className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                     msg.role === "user"
                       ? "bg-indigo-600 text-white rounded-tr-sm"
-                      : "bg-gray-50 text-gray-800 border border-gray-100 rounded-tl-sm"
+                      : "bg-gray-50 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border border-gray-100 dark:border-slate-700 rounded-tl-sm"
                   }`}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm max-w-none prose-table:border prose-td:border prose-th:border prose-td:px-2 prose-td:py-1 prose-th:px-2 prose-th:py-1 prose-table:text-xs">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <div className="prose prose-sm max-w-none text-gray-800 dark:text-slate-100">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          table: ({ ...props }) => (
+                            <div className="overflow-x-auto my-3 border border-indigo-100 dark:border-slate-700 rounded-xl shadow-sm bg-white dark:bg-slate-900">
+                              <table className="w-full text-left text-xs border-collapse" {...props} />
+                            </div>
+                          ),
+                          thead: ({ ...props }) => (
+                            <thead className="bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-slate-800 dark:to-slate-800 border-b border-indigo-100 dark:border-slate-700 text-indigo-900 dark:text-indigo-300 font-semibold" {...props} />
+                          ),
+                          th: ({ ...props }) => (
+                            <th className="px-3.5 py-2.5 font-semibold text-indigo-950 dark:text-indigo-200 border-r border-indigo-100/50 dark:border-slate-700 last:border-r-0" {...props} />
+                          ),
+                          td: ({ ...props }) => (
+                            <td className="px-3.5 py-2 text-gray-700 dark:text-slate-300 border-t border-gray-100 dark:border-slate-800 border-r border-gray-100/40 dark:border-slate-800 last:border-r-0" {...props} />
+                          ),
+                          tr: ({ ...props }) => (
+                            <tr className="hover:bg-indigo-50/30 dark:hover:bg-slate-800/60 transition-colors even:bg-gray-50/60 dark:even:bg-slate-800/30" {...props} />
+                          ),
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
                     <span className="whitespace-pre-wrap">{msg.content}</span>
                   )}
                 </div>
-                <span className="text-[10px] text-gray-400 px-1">{formatTime(msg.timestamp)}</span>
+                <span className="text-[10px] text-gray-400 dark:text-slate-500 px-1">{formatTime(msg.timestamp)}</span>
               </div>
             </div>
           ))}
@@ -221,9 +245,9 @@ export default function AiAssistantPage() {
               <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-violet-500 to-indigo-600">
                 <Bot className="w-4 h-4 text-white" />
               </div>
-              <div className="px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl rounded-tl-sm flex items-center gap-2">
+              <div className="px-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl rounded-tl-sm flex items-center gap-2">
                 <Loader2 className="w-4 h-4 text-indigo-500 animate-spin" />
-                <span className="text-sm text-gray-400 italic">Analysing data…</span>
+                <span className="text-sm text-gray-400 dark:text-slate-400 italic">Analysing data…</span>
               </div>
             </div>
           )}
@@ -232,7 +256,7 @@ export default function AiAssistantPage() {
         </div>
 
         {/* Input bar */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm flex items-end gap-3 p-3">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl shadow-sm flex items-end gap-3 p-3">
           <textarea
             ref={inputRef}
             rows={1}
@@ -241,7 +265,7 @@ export default function AiAssistantPage() {
             onKeyDown={handleKeyDown}
             disabled={isLoading}
             placeholder="Ask about revenue, branches, targets…"
-            className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder-gray-400 outline-none max-h-32 leading-relaxed"
+            className="flex-1 resize-none bg-transparent text-sm text-gray-800 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 outline-none max-h-32 leading-relaxed"
             style={{ minHeight: "24px" }}
           />
           <button

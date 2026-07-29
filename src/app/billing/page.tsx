@@ -85,6 +85,16 @@ export default function BillingPage() {
     loadDescriptors();
   }, []);
 
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  // Debounce search input by 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   // Main Billing Fetcher (using Server Pagination and Filters)
   const fetchBillings = useCallback(async () => {
     try {
@@ -96,8 +106,8 @@ export default function BillingPage() {
         limit: itemsPerPage.toString()
       });
 
-      if (searchTerm.trim()) {
-        params.append("search", searchTerm.trim());
+      if (debouncedSearchTerm.trim()) {
+        params.append("search", debouncedSearchTerm.trim());
       }
 
       const response = await fetch(`${getApiUrl()}/api/billing?${params.toString()}`, {
@@ -132,16 +142,16 @@ export default function BillingPage() {
       setLoading(false);
       setIsInitialLoading(false);
     }
-  }, [currentPage, searchTerm]);
+  }, [currentPage, debouncedSearchTerm]);
 
   useEffect(() => {
     fetchBillings();
   }, [fetchBillings]);
 
-  // Reset page to 1 when search term changes
+  // Reset page to 1 only when debounced search term changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
 
   const handleDelete = useCallback(async (recordId: string) => {
     if (userRole !== 'admin') {
@@ -216,13 +226,13 @@ export default function BillingPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-4 sm:space-y-6 p-3 sm:p-6 bg-gray-50 min-h-screen">
+      <div className="space-y-4 sm:space-y-6 p-3 sm:p-6 bg-gray-50 dark:bg-slate-950 min-h-screen">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-slate-100 dark:to-slate-400 bg-clip-text text-transparent">
               Billing Management
             </h1>
-            <p className="text-xs text-gray-500 mt-1">Manage invoice history and tax receipts.</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Manage invoice history and tax receipts.</p>
           </div>
           <button
             onClick={() => (window.location.href = "/invoice-form")}
@@ -247,11 +257,11 @@ export default function BillingPage() {
         />
 
         {/* Billings Record Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+          <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-gray-900">Billing Records</h2>
-              <p className="text-xs sm:text-sm text-gray-500">Showing {billingRecords.length} of {totalCount} records</p>
+              <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-slate-100">Billing Records</h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">Showing {billingRecords.length} of {totalCount} records</p>
             </div>
             <div className="relative w-full sm:w-64">
               <input
@@ -259,7 +269,7 @@ export default function BillingPage() {
                 placeholder="Search customer by name or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all font-medium"
+                className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 focus:border-blue-300 dark:focus:border-blue-600 transition-all font-medium"
               />
             </div>
           </div>
@@ -269,11 +279,11 @@ export default function BillingPage() {
           ) : error ? (
             <div className="p-8 text-center text-rose-500 font-medium">{error}</div>
           ) : billingRecords.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 font-medium">No matching billing records found.</div>
+            <div className="p-8 text-center text-gray-500 dark:text-slate-400 font-medium">No matching billing records found.</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-gray-500">
-                <thead className="bg-gray-50 text-xs text-gray-700 uppercase font-semibold">
+              <table className="w-full text-left text-sm text-gray-500 dark:text-slate-400">
+                <thead className="bg-gray-50 dark:bg-slate-800/50 text-xs text-gray-700 dark:text-slate-300 uppercase font-semibold">
                   <tr>
                     <th className="px-6 py-4">Customer</th>
                     <th className="px-6 py-4">Branch</th>
@@ -284,24 +294,24 @@ export default function BillingPage() {
                     <th className="px-6 py-4 text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                   {billingRecords.map((record) => (
-                    <tr key={record._id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 font-semibold text-gray-900">
+                    <tr key={record._id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 font-semibold text-gray-900 dark:text-slate-100">
                         <div>{record.customerName}</div>
-                        <div className="text-xs text-gray-400 font-normal">{record.mobile || '-'}</div>
+                        <div className="text-xs text-gray-400 dark:text-slate-400 font-normal">{record.mobile || '-'}</div>
                       </td>
-                      <td className="px-6 py-4">{resolveBranchName(record.branch)}</td>
-                      <td className="px-6 py-4">{getSalesPersonName(record.salesPerson)}</td>
-                      <td className="px-6 py-4">{formatPaymentMode(record.paymentMode)}</td>
-                      <td className="px-6 py-4 font-bold text-gray-900">₹{(record.totalAmount || 0).toLocaleString('en-IN')}</td>
-                      <td className="px-6 py-4">{new Date(record.date || record.createdAt).toLocaleDateString('en-GB')}</td>
+                      <td className="px-6 py-4 text-gray-700 dark:text-slate-300">{resolveBranchName(record.branch)}</td>
+                      <td className="px-6 py-4 text-gray-700 dark:text-slate-300">{getSalesPersonName(record.salesPerson)}</td>
+                      <td className="px-6 py-4 text-gray-700 dark:text-slate-300">{formatPaymentMode(record.paymentMode)}</td>
+                      <td className="px-6 py-4 font-bold text-gray-900 dark:text-slate-100">₹{(record.totalAmount || 0).toLocaleString('en-IN')}</td>
+                      <td className="px-6 py-4 text-gray-700 dark:text-slate-300">{new Date(record.date || record.createdAt).toLocaleDateString('en-GB')}</td>
                       <td className="px-6 py-4 text-center">
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => setViewingRecord(record)}
                             title="View Details"
-                            className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-1.5 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -309,7 +319,7 @@ export default function BillingPage() {
                             onClick={() => triggerDownloadPdf(record)}
                             disabled={pdfDownloadingId === record._id}
                             title="Download PDF"
-                            className="p-1.5 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-1.5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg transition-colors disabled:opacity-50"
                           >
                             {pdfDownloadingId === record._id ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -321,7 +331,7 @@ export default function BillingPage() {
                             <button
                               onClick={() => setDeleteConfirmId(record._id)}
                               title="Delete Record"
-                              className="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
+                              className="p-1.5 text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -337,9 +347,9 @@ export default function BillingPage() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="p-4 bg-gray-50 border-t flex items-center justify-between">
-              <span className="text-sm text-gray-500">
-                Page <span className="font-semibold text-gray-900">{currentPage}</span> of <span className="font-semibold text-gray-900">{totalPages}</span>
+            <div className="p-4 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between">
+              <span className="text-sm text-gray-500 dark:text-slate-400">
+                Page <span className="font-semibold text-gray-900 dark:text-slate-100">{currentPage}</span> of <span className="font-semibold text-gray-900 dark:text-slate-100">{totalPages}</span>
               </span>
               <div className="flex gap-2">
                 <Button
@@ -347,6 +357,7 @@ export default function BillingPage() {
                   size="sm"
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1 || loading}
+                  className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   Previous
                 </Button>
@@ -355,6 +366,7 @@ export default function BillingPage() {
                   size="sm"
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages || loading}
+                  className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   Next
                 </Button>
@@ -368,48 +380,48 @@ export default function BillingPage() {
       <AnimatePresence>
         {viewingRecord && (
           <Dialog open={!!viewingRecord} onOpenChange={() => setViewingRecord(null)}>
-            <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border border-gray-200 dark:border-slate-800">
               <DialogHeader>
-                <DialogTitle>Billing Transaction Details</DialogTitle>
+                <DialogTitle className="text-gray-900 dark:text-slate-100">Billing Transaction Details</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2">
-                <div className="grid grid-cols-2 gap-4 border-b pb-4">
+                <div className="grid grid-cols-2 gap-4 border-b border-gray-100 dark:border-slate-800 pb-4">
                   <div>
-                    <Label className="text-gray-400">Customer Name</Label>
-                    <p className="font-bold text-gray-900">{viewingRecord.customerName}</p>
+                    <Label className="text-gray-400 dark:text-slate-400">Customer Name</Label>
+                    <p className="font-bold text-gray-900 dark:text-slate-100">{viewingRecord.customerName}</p>
                   </div>
                   <div>
-                    <Label className="text-gray-400">Company Name</Label>
-                    <p className="font-bold text-gray-900">{viewingRecord.companyName || 'N/A'}</p>
+                    <Label className="text-gray-400 dark:text-slate-400">Company Name</Label>
+                    <p className="font-bold text-gray-900 dark:text-slate-100">{viewingRecord.companyName || 'N/A'}</p>
                   </div>
                   <div>
-                    <Label className="text-gray-400">Mobile Number</Label>
-                    <p className="text-gray-900">{viewingRecord.mobile || '-'}</p>
+                    <Label className="text-gray-400 dark:text-slate-400">Mobile Number</Label>
+                    <p className="text-gray-900 dark:text-slate-200">{viewingRecord.mobile || '-'}</p>
                   </div>
                   <div>
-                    <Label className="text-gray-400">Email Address</Label>
-                    <p className="text-gray-900">{viewingRecord.email || '-'}</p>
+                    <Label className="text-gray-400 dark:text-slate-400">Email Address</Label>
+                    <p className="text-gray-900 dark:text-slate-200">{viewingRecord.email || '-'}</p>
                   </div>
                   <div>
-                    <Label className="text-gray-400">GST Identification</Label>
-                    <p className="font-mono text-gray-900">{viewingRecord.gstNumber || 'N/A'}</p>
+                    <Label className="text-gray-400 dark:text-slate-400">GST Identification</Label>
+                    <p className="font-mono text-gray-900 dark:text-slate-200">{viewingRecord.gstNumber || 'N/A'}</p>
                   </div>
                   <div>
-                    <Label className="text-gray-400">Total Invoice Amount</Label>
-                    <p className="font-bold text-blue-600 text-lg">₹{(viewingRecord.totalAmount || 0).toLocaleString('en-IN')}</p>
+                    <Label className="text-gray-400 dark:text-slate-400">Total Invoice Amount</Label>
+                    <p className="font-bold text-blue-600 dark:text-blue-400 text-lg">₹{(viewingRecord.totalAmount || 0).toLocaleString('en-IN')}</p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-gray-800 mb-2">Invoiced Products</h4>
-                  <div className="border rounded bg-gray-50 p-3 space-y-2">
+                  <h4 className="font-bold text-gray-800 dark:text-slate-100 mb-2">Invoiced Products</h4>
+                  <div className="border border-gray-200 dark:border-slate-700 rounded bg-gray-50 dark:bg-slate-800 p-3 space-y-2">
                     {(viewingRecord.products || []).map((prod: any, idx: number) => (
-                      <div key={idx} className="flex justify-between text-sm border-b pb-1.5 last:border-0 last:pb-0">
+                      <div key={idx} className="flex justify-between text-sm border-b border-gray-100 dark:border-slate-700 pb-1.5 last:border-0 last:pb-0">
                         <div>
-                          <p className="font-semibold text-gray-800">{prod.model || prod.name || 'Item'}</p>
-                          {prod.serialNumber && <p className="text-xs text-gray-500">S/N: {prod.serialNumber}</p>}
+                          <p className="font-semibold text-gray-800 dark:text-slate-100">{prod.model || prod.name || 'Item'}</p>
+                          {prod.serialNumber && <p className="text-xs text-gray-500 dark:text-slate-400">S/N: {prod.serialNumber}</p>}
                         </div>
-                        <p className="font-semibold text-gray-900">₹{(prod.price || 0).toLocaleString('en-IN')}</p>
+                        <p className="font-semibold text-gray-900 dark:text-slate-100">₹{(prod.price || 0).toLocaleString('en-IN')}</p>
                       </div>
                     ))}
                   </div>
@@ -417,11 +429,11 @@ export default function BillingPage() {
 
                 {viewingRecord.attachments && (
                   <div>
-                    <h4 className="font-bold text-gray-800 mb-2">Attachments Summary</h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                      {viewingRecord.attachments.customerID && <div className="p-2 border bg-gray-50 rounded">ID Proof attached</div>}
-                      {viewingRecord.attachments.paymentSlip && <div className="p-2 border bg-gray-50 rounded">Payment Slip attached</div>}
-                      {viewingRecord.attachments.googleReview && <div className="p-2 border bg-gray-50 rounded">Google Review screenshot attached</div>}
+                    <h4 className="font-bold text-gray-800 dark:text-slate-100 mb-2">Attachments Summary</h4>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-slate-300">
+                      {viewingRecord.attachments.customerID && <div className="p-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded">ID Proof attached</div>}
+                      {viewingRecord.attachments.paymentSlip && <div className="p-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded">Payment Slip attached</div>}
+                      {viewingRecord.attachments.googleReview && <div className="p-2 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded">Google Review screenshot attached</div>}
                     </div>
                   </div>
                 )}

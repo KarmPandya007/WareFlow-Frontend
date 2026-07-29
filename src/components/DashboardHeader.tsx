@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Bell, Menu, User } from "lucide-react";
+import { Search, Bell, Menu, User, Sun, Moon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getApiUrl } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -21,6 +22,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const [userName, setUserName] = useState("Admin");
   const [userRole, setUserRole] = useState("Admin");
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -37,52 +39,63 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
   const handleLogout = async () => {
     try {
-        await fetch(`${getApiUrl()}/api/auth/logout`, { method: "POST", credentials: "include" });
-        localStorage.clear();
-        router.push("/");
+      await fetch(`${getApiUrl()}/api/auth/logout`, { method: "POST", credentials: "include" });
+      localStorage.clear();
+      router.push("/");
     } catch (err) {
       console.error("Logout failed:", err);
-      // Fallback
       localStorage.clear();
       router.push("/");
     }
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 px-4 sm:px-6 h-16 flex items-center justify-between transition-colors">
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuClick}
-          className="md:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+          className="md:hidden p-2 -ml-2 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
-        
-      
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
-        <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+        {/* Dark/Light Mode Toggle */}
+        <button
+          onClick={toggleTheme}
+          title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          className="p-2 text-gray-500 dark:text-slate-300 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200"
+        >
+          {theme === "dark" ? (
+            <Sun className="w-5 h-5 text-amber-400 transform hover:rotate-45 transition-transform" />
+          ) : (
+            <Moon className="w-5 h-5 text-slate-700 hover:text-indigo-600 transition-colors" />
+          )}
         </button>
 
-        <div className="w-px h-8 bg-gray-200 mx-1 hidden sm:block"></div>
+        {/* Notifications */}
+        <button className="relative p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+          <Bell className="w-5 h-5" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-slate-900"></span>
+        </button>
+
+        <div className="w-px h-8 bg-gray-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 p-1 pl-2 pr-1 rounded-full hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all">
+            <button className="flex items-center gap-3 p-1 pl-2 pr-1 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 border border-transparent hover:border-gray-100 dark:hover:border-slate-700 transition-all">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold text-gray-700 leading-none">{userName}</p>
-                <p className="text-xs text-gray-500 mt-1">{userRole}</p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-slate-200 leading-none">{userName}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{userRole}</p>
               </div>
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white shadow-md">
                 <User className="w-4 h-4" />
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50">
+          <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800">
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400 cursor-pointer focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/30">
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

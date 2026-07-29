@@ -216,7 +216,7 @@ export default function TargetProgress({ userId }: TargetProgressProps) {
                         <span className="capitalize font-medium">{pt.category}</span>
                         <span>{pt.currentValue} / {pt.targetValue} units</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                         <div 
                           className={`h-2 rounded-full transition-all ${getProgressColor(pt.progressPercentage || 0, target.status)}`}
                           style={{ width: `${pt.progressPercentage || 0}%` }}
@@ -258,7 +258,7 @@ export default function TargetProgress({ userId }: TargetProgressProps) {
                     <span>{progress.toFixed(1)}%</span>
                   </div>
                   
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full transition-all ${getProgressColor(progress, target.status)}`}
                       style={{ width: `${progress}%` }}

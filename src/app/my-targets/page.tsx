@@ -148,46 +148,46 @@ export default function MyTargetsPage() {
 
   return (
     <AdminLayout>
-      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50 min-h-screen">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 bg-gray-50 dark:bg-slate-950 min-h-screen">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-600 rounded-lg">
               <Target className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Performance Targets</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-slate-100">Performance Targets</h1>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          <Card className="border-0 shadow-sm">
+          <Card className="border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
             <CardContent className="pt-4 sm:pt-6">
-              <div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Total Targets</div>
-              <div className="text-2xl sm:text-3xl font-semibold text-gray-900">{targets.length}</div>
+              <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Total Targets</div>
+              <div className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-slate-100">{targets.length}</div>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm">
+          <Card className="border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
             <CardContent className="pt-4 sm:pt-6">
-              <div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Active</div>
-              <div className="text-2xl sm:text-3xl font-semibold text-amber-600">{activeTargets}</div>
+              <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Active</div>
+              <div className="text-2xl sm:text-3xl font-semibold text-amber-600 dark:text-amber-400">{activeTargets}</div>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm">
+          <Card className="border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
             <CardContent className="pt-4 sm:pt-6">
-              <div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Completed</div>
-              <div className="text-2xl sm:text-3xl font-semibold text-emerald-600">{completedTargets}</div>
+              <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Completed</div>
+              <div className="text-2xl sm:text-3xl font-semibold text-emerald-600 dark:text-emerald-400">{completedTargets}</div>
             </CardContent>
           </Card>
-          <Card className="border-0 shadow-sm">
+          <Card className="border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
             <CardContent className="pt-4 sm:pt-6">
-              <div className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Pending Incentives</div>
-              <div className="text-2xl sm:text-3xl font-semibold text-blue-600">₹{totalPendingIncentives.toLocaleString()}</div>
+              <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">Pending Incentives</div>
+              <div className="text-2xl sm:text-3xl font-semibold text-blue-600 dark:text-blue-400">₹{totalPendingIncentives.toLocaleString()}</div>
             </CardContent>
           </Card>
         </div>
 
         {targets.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center text-gray-500">
+          <Card className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800">
+            <CardContent className="py-12 text-center text-gray-500 dark:text-slate-400">
               No targets assigned yet
             </CardContent>
           </Card>
@@ -199,29 +199,29 @@ export default function MyTargetsPage() {
                 : getProgressPercentage(target.currentValue || 0, target.targetValue || 1);
               
               return (
-              <Card key={target._id} className="border-0 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <Card key={target._id} className="border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-base sm:text-lg font-semibold text-gray-900">{getTargetTypeDisplay(target.targetType)}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-slate-100">{getTargetTypeDisplay(target.targetType)}</h3>
                         <span className={`px-2.5 py-0.5 rounded-md text-xs font-medium ${getStatusColor(target.status)}`}>
                           {target.status.charAt(0).toUpperCase() + target.status.slice(1)}
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm text-gray-500">{formatDate(target.startDate)} - {formatDate(target.endDate)} • {target.period.charAt(0).toUpperCase() + target.period.slice(1)}</p>
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">{formatDate(target.startDate)} - {formatDate(target.endDate)} • {target.period.charAt(0).toUpperCase() + target.period.slice(1)}</p>
                     </div>
                     {target.incentiveAmount && target.incentiveAmount > 0 && (
-                      <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 rounded-lg border border-emerald-100">
+                      <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg border border-emerald-100 dark:border-emerald-900/60">
                         <div className="text-right">
-                          <p className="text-xs font-medium text-gray-600">Incentive</p>
-                          <p className="text-base sm:text-lg font-semibold text-emerald-700">₹{target.incentiveAmount.toLocaleString()}</p>
+                          <p className="text-xs font-medium text-gray-600 dark:text-slate-400">Incentive</p>
+                          <p className="text-base sm:text-lg font-semibold text-emerald-700 dark:text-emerald-400">₹{target.incentiveAmount.toLocaleString()}</p>
                         </div>
                         {target.incentiveStatus && (
                           <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            target.incentiveStatus === 'paid' ? 'bg-emerald-100 text-emerald-700' :
-                            target.incentiveStatus === 'cancelled' ? 'bg-rose-100 text-rose-700' :
-                            'bg-amber-100 text-amber-700'
+                            target.incentiveStatus === 'paid' ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300' :
+                            target.incentiveStatus === 'cancelled' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300' :
+                            'bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300'
                           }`}>
                             {target.incentiveStatus.charAt(0).toUpperCase() + target.incentiveStatus.slice(1)}
                           </span>
@@ -235,8 +235,8 @@ export default function MyTargetsPage() {
                       {target.productTargets.map((pt) => {
                         const progress = pt.progressPercentage ?? getProgressPercentage(pt.currentValue, pt.targetValue);
                         return (
-                        <div key={pt.category} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                          <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wide mb-2">{pt.category}</p>
+                        <div key={pt.category} className="p-3 bg-gray-50 dark:bg-slate-800/60 rounded-lg border border-gray-200 dark:border-slate-700">
+                          <p className="text-[10px] font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wide mb-2">{pt.category}</p>
                           <AnimatedTargetProgress
                             initialValue={0}
                             currentValue={pt.currentValue}
@@ -244,9 +244,9 @@ export default function MyTargetsPage() {
                             status={target.status}
                           />
                           <div className="flex items-baseline gap-1 mt-1">
-                            <span className="text-lg font-bold text-gray-900">{pt.currentValue}</span>
-                            <span className="text-xs text-gray-500">/ {pt.targetValue}</span>
-                            <span className="ml-auto text-[10px] text-gray-600">{progress.toFixed(0)}%</span>
+                            <span className="text-lg font-bold text-gray-900 dark:text-slate-100">{pt.currentValue}</span>
+                            <span className="text-xs text-gray-500 dark:text-slate-400">/ {pt.targetValue}</span>
+                            <span className="ml-auto text-[10px] text-gray-600 dark:text-slate-400">{progress.toFixed(0)}%</span>
                           </div>
                         </div>
                       )})}
@@ -260,31 +260,31 @@ export default function MyTargetsPage() {
                         status={target.status}
                       />
                       <div className="flex items-baseline gap-2 mt-2">
-                        <span className="text-2xl sm:text-3xl font-semibold text-gray-900">{formatTargetValue(target.currentValue || 0, target.targetType)}</span>
-                        <span className="text-sm text-gray-500">of {formatTargetValue(target.targetValue || 0, target.targetType)}</span>
+                        <span className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-slate-100">{formatTargetValue(target.currentValue || 0, target.targetType)}</span>
+                        <span className="text-sm text-gray-500 dark:text-slate-400">of {formatTargetValue(target.targetValue || 0, target.targetType)}</span>
                       </div>
                     </div>
                   )}
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-gray-100">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
                     <div className="flex items-center gap-4">
                       <div>
-                        <p className="text-xs text-gray-500 mb-0.5">Progress</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400 mb-0.5">Progress</p>
                         <p className={`text-lg font-semibold ${
-                          overallProgress >= 80 ? 'text-emerald-600' :
-                          overallProgress >= 50 ? 'text-amber-600' : 'text-rose-600'
+                          overallProgress >= 80 ? 'text-emerald-600 dark:text-emerald-400' :
+                          overallProgress >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'
                         }`}>{overallProgress.toFixed(1)}%</p>
                       </div>
-                      <div className="h-10 w-px bg-gray-200" />
+                      <div className="h-10 w-px bg-gray-200 dark:bg-slate-700" />
                       <div>
-                        <p className="text-xs text-gray-500 mb-0.5">Time Remaining</p>
-                        <p className="text-sm font-medium text-gray-700">
+                        <p className="text-xs text-gray-500 dark:text-slate-400 mb-0.5">Time Remaining</p>
+                        <p className="text-sm font-medium text-gray-700 dark:text-slate-300">
                           {getDaysRemaining(target.endDate) > 0 ? `${getDaysRemaining(target.endDate)} days` : `Overdue by ${Math.abs(getDaysRemaining(target.endDate))} days`}
                         </p>
                       </div>
                     </div>
                     {target.status === 'active' && (
-                      <div className="text-sm font-medium text-blue-600">
+                      <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
                         {getMotivationalMessage(target)}
                       </div>
                     )}

@@ -29,8 +29,8 @@ export const GSTBillingSection = memo(function GSTBillingSection({
   onRefresh
 }: GSTBillingSectionProps) {
   return (
-    <section className="p-6 border rounded-lg shadow bg-white">
-      <h2 className="text-lg font-bold mb-4 text-gray-800">GST Billing Details</h2>
+    <section className="p-6 border border-gray-200 dark:border-slate-800 rounded-lg shadow bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
+      <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-slate-100">GST Billing Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label className="mb-1">Mobile Number</Label>

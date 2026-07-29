@@ -29,28 +29,28 @@ export const BillingCharts = memo(function BillingCharts({
 
   return (
     <div className="mb-4 sm:mb-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 sm:p-6">
         <div className="flex flex-col gap-3 mb-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-slate-100">
               Analytics
             </h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentChartIndex(prev => prev === 0 ? chartsCount - 1 : prev - 1)}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 title="Previous Chart"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <span className="text-sm text-gray-500 min-w-[150px] text-center font-medium">
+              <span className="text-sm text-gray-500 dark:text-slate-400 min-w-[150px] text-center font-medium">
                 {currentChartIndex === 0 ? 'Billings Per Day' : 'Devices Sold Per Day'}
               </span>
               <button
                 onClick={() => setCurrentChartIndex(prev => prev === chartsCount - 1 ? 0 : prev + 1)}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 title="Next Chart"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,11 +63,11 @@ export const BillingCharts = memo(function BillingCharts({
           {userRole === 'admin' && (
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex items-center gap-2">
-                <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Branch:</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300 whitespace-nowrap">Branch:</label>
                 <select
                   value={selectedBranchForCharts}
                   onChange={(e) => setSelectedBranchForCharts(e.target.value)}
-                  className="w-40 sm:w-48 px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-40 sm:w-48 px-2 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100"
                 >
                   <option value="all">All Branches</option>
                   {branches.map(branch => (
@@ -78,11 +78,11 @@ export const BillingCharts = memo(function BillingCharts({
                 </select>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Sales:</label>
+                <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300 whitespace-nowrap">Sales:</label>
                 <select
                   value={selectedSalesPersonForCharts}
                   onChange={(e) => setSelectedSalesPersonForCharts(e.target.value)}
-                  className="w-40 sm:w-48 px-2 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-40 sm:w-48 px-2 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100"
                 >
                   <option value="all">All Sales Persons</option>
                   {salesPersons.map((person, index) => (

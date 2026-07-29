@@ -312,26 +312,11 @@ export default function InventoryTransferPage() {
 
         // Extract the data array from the response and normalize product
         if (result.data && Array.isArray(result.data)) {
-          // Try to fetch products to enrich transfers (if server returns only product ids)
-          let productsList: any[] = [];
-          try {
-            const pRes = await fetch(`${getApiUrl()}/api/products`, { method: 'GET', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
-            if (pRes.ok) {
-              const pJson = await pRes.json();
-              productsList = pJson.products || pJson.data || (Array.isArray(pJson) ? pJson : []);
-            }
-          } catch (e) {
-            console.warn('Failed to fetch products for enrichment', e);
-          }
-
-          // Ensure productsList is an array before calling forEach
-          if (!Array.isArray(productsList)) {
-            console.warn('Expected productsList to be an array, but received:', productsList);
-            productsList = [];
-          }
-
+          // Use already-fetched products from state instead of re-fetching
           const prodMap: Record<string, any> = {};
-          productsList.forEach((p: any) => { if (p && (p._id || p.id)) prodMap[p._id || p.id] = p; });
+          if (Array.isArray(products)) {
+            products.forEach((p: any) => { if (p && (p._id || p.id)) prodMap[p._id || p.id] = p; });
+          }
 
           const normalized = result.data.map((t: any) => {
             // Normalize product: if object, use it; if string id, lookup in prodMap; else fallback
@@ -696,12 +681,12 @@ export default function InventoryTransferPage() {
       <TableBody>
         {[...Array(5)].map((_, i) => (
           <TableRow key={i}>
-            <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse w-20" /></TableCell>
-            <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse w-48" /></TableCell>
-            <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse w-32" /></TableCell>
-            <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse w-32" /></TableCell>
-            <TableCell><div className="h-4 bg-gray-200 rounded animate-pulse w-20" /></TableCell>
-            <TableCell><div className="h-8 bg-gray-200 rounded animate-pulse w-40" /></TableCell>
+            <TableCell><div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-20" /></TableCell>
+            <TableCell><div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-48" /></TableCell>
+            <TableCell><div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-32" /></TableCell>
+            <TableCell><div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-32" /></TableCell>
+            <TableCell><div className="h-4 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-20" /></TableCell>
+            <TableCell><div className="h-8 bg-gray-200 dark:bg-slate-700 rounded animate-pulse w-40" /></TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -889,33 +874,33 @@ export default function InventoryTransferPage() {
                   }
 
                   return (
-                    <div key={transfer._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <div key={transfer._id} className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-200 dark:border-slate-800 p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
-                          <div className="text-xs text-gray-500 mb-1">{transferDate}</div>
-                          <h3 className="font-semibold text-gray-900 text-sm">{summaryText}</h3>
+                          <div className="text-xs text-gray-500 dark:text-slate-400 mb-1">{transferDate}</div>
+                          <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm">{summaryText}</h3>
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setViewingTransfer(transfer)}
-                          className="p-2"
+                          className="p-2 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="grid grid-cols-2 gap-3 text-sm mb-3">
                         <div>
-                          <span className="text-xs text-gray-500 block">Source</span>
-                          <span className="text-gray-700">{transfer.sourceGodown?.name || 'N/A'}</span>
+                          <span className="text-xs text-gray-500 dark:text-slate-400 block">Source</span>
+                          <span className="text-gray-700 dark:text-slate-200">{transfer.sourceGodown?.name || 'N/A'}</span>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-500 block">Destination</span>
-                          <span className="text-gray-700">{transfer.destinationGodown?.name || 'N/A'}</span>
+                          <span className="text-xs text-gray-500 dark:text-slate-400 block">Destination</span>
+                          <span className="text-gray-700 dark:text-slate-200">{transfer.destinationGodown?.name || 'N/A'}</span>
                         </div>
                         <div className="col-span-2">
-                          <span className="text-xs text-gray-500 block">Created By</span>
-                          <span className="text-gray-700">{transfer.createdBy ? `${transfer.createdBy.firstName} ${transfer.createdBy.lastName || ''}`.trim() : 'N/A'}</span>
+                          <span className="text-xs text-gray-500 dark:text-slate-400 block">Created By</span>
+                          <span className="text-gray-700 dark:text-slate-200">{transfer.createdBy ? `${transfer.createdBy.firstName} ${transfer.createdBy.lastName || ''}`.trim() : 'N/A'}</span>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -923,7 +908,7 @@ export default function InventoryTransferPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => downloadTransferExcel(transfer)}
-                          className="flex-1 text-xs"
+                          className="flex-1 text-xs bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200"
                         >
                           <FileSpreadsheet className="mr-1 h-3 w-3" />
                           Excel
@@ -932,7 +917,7 @@ export default function InventoryTransferPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => exportToTally(transfer._id)}
-                          className="flex-1 text-xs"
+                          className="flex-1 text-xs bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200"
                         >
                           Tally
                         </Button>
@@ -945,9 +930,9 @@ export default function InventoryTransferPage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="p-4 bg-gray-50 border-t flex items-center justify-between mt-4 rounded-b-lg">
-                <span className="text-sm text-gray-500 font-medium">
-                  Page <span className="font-semibold text-gray-900">{currentPage}</span> of <span className="font-semibold text-gray-900">{totalPages}</span>
+              <div className="p-4 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-200 dark:border-slate-800 flex items-center justify-between mt-4 rounded-b-lg">
+                <span className="text-sm text-gray-500 dark:text-slate-400 font-medium">
+                  Page <span className="font-semibold text-gray-900 dark:text-slate-100">{currentPage}</span> of <span className="font-semibold text-gray-900 dark:text-slate-100">{totalPages}</span>
                 </span>
                 <div className="flex gap-2">
                   <Button
@@ -955,6 +940,7 @@ export default function InventoryTransferPage() {
                     size="sm"
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
+                    className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                   >
                     Previous
                   </Button>
@@ -963,6 +949,7 @@ export default function InventoryTransferPage() {
                     size="sm"
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
+                    className="bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700"
                   >
                     Next
                   </Button>

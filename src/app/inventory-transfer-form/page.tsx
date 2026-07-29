@@ -548,10 +548,10 @@ const fetchBranches = async () => {
                   <CardContent>
                     <div className="mb-4 flex flex-col md:flex-row md:gap-8 gap-2 text-sm text-muted-foreground">
                       <div>
-                        <span className="font-semibold text-black">Source:</span> {branches.find(b => b._id === sourceGodownId)?.name || '—'}
+                        <span className="font-semibold text-gray-900 dark:text-slate-100">Source:</span> {branches.find(b => b._id === sourceGodownId)?.name || '—'}
                       </div>
                       <div>
-                        <span className="font-semibold text-black">Destination:</span> {branches.find(b => b._id === destinationGodownId)?.name || '—'}
+                        <span className="font-semibold text-gray-900 dark:text-slate-100">Destination:</span> {branches.find(b => b._id === destinationGodownId)?.name || '—'}
                       </div>
                     </div>
                     <Table>

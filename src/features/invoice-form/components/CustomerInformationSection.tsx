@@ -20,12 +20,12 @@ export const CustomerInformationSection = memo(function CustomerInformationSecti
   validateEmail
 }: CustomerInformationSectionProps) {
   return (
-    <section className="p-6 border rounded-lg shadow bg-white">
-      <h2 className="text-lg font-bold mb-4 text-gray-800">Customer Information</h2>
+    <section className="p-6 border border-gray-200 dark:border-slate-800 rounded-lg shadow bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
+      <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-slate-100">Customer Information</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label className="mb-1 flex items-center gap-2">GST Number
-            {gstVerifying && <span className="ml-2 text-xs text-blue-600">Verifying...</span>}
+            {gstVerifying && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">Verifying...</span>}
           </Label>
           <div className="relative">
             <Input
@@ -61,7 +61,7 @@ export const CustomerInformationSection = memo(function CustomerInformationSecti
               </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 mt-1">Auto-fills company name and pincode on verification</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Auto-fills company name and pincode on verification</p>
         </div>
         <div>
           <Label className="mb-1">Billing Name <span className="text-red-500">*</span></Label>

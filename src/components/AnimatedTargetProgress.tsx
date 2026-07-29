@@ -36,7 +36,7 @@ export default function AnimatedTargetProgressProps({
   return (
     <div className="relative w-full h-16 mb-2">
       {/* Track */}
-      <div className="absolute bottom-6 left-0 right-0 h-3 bg-gray-200 rounded-full overflow-hidden">
+      <div className="absolute bottom-6 left-0 right-0 h-3 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
         <motion.div
           className={`h-full ${getProgressColor()}`}
           initial={{ width: "0%" }}
@@ -53,7 +53,7 @@ export default function AnimatedTargetProgressProps({
         transition={{ duration: 1.2, ease: "easeInOut" }}
         style={{ transform: "translateX(-50%)" }}
       >
-        <div className="w-12 h-12 bg-white rounded-full shadow-md overflow-hidden">
+        <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-full shadow-md overflow-hidden border border-gray-200 dark:border-slate-700">
           <video
             src="/running-person.mp4"
             autoPlay
@@ -66,10 +66,10 @@ export default function AnimatedTargetProgressProps({
       </motion.div>
 
       {/* Labels */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-600">
+      <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-600 dark:text-slate-400">
         <span>{initialValue}</span>
         <motion.span
-          className="font-semibold text-gray-800"
+          className="font-semibold text-gray-800 dark:text-slate-100"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}

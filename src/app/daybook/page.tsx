@@ -26,6 +26,7 @@ export default function DayBookPage() {
     }
     fetchProducts();
     fetchBranches();
+    fetchBillings();
   }, []);
 
   useEffect(() => {
@@ -300,20 +301,20 @@ export default function DayBookPage() {
           <div className="p-2 bg-blue-600 rounded-lg">
             <Calendar className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
-          <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Day Book</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-slate-100">Day Book</h1>
         </div>
 
-        <div className="bg-white rounded-md shadow-sm border border-gray-200 p-4 md:p-5">
+        <div className="bg-white dark:bg-slate-900 rounded-md shadow-sm border border-gray-200 dark:border-slate-800 p-4 md:p-5">
           <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-end">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Select Date
               </label>
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <button
@@ -336,8 +337,8 @@ export default function DayBookPage() {
 
           {fetched && billings.length === 0 && (
             <div className="mt-6">
-              <div className="bg-amber-50 border border-amber-200 rounded-md p-6 text-center">
-                <p className="text-amber-800 font-medium text-sm">
+              <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-md p-6 text-center">
+                <p className="text-amber-800 dark:text-amber-300 font-medium text-sm">
                   No billings were made on {new Date(selectedDate).toLocaleDateString('en-GB')}
                 </p>
               </div>
@@ -346,15 +347,15 @@ export default function DayBookPage() {
 
           {billings.length > 0 && (
             <div className="mt-6">
-              <p className="text-sm text-gray-600 mb-4">
-                Found <span className="font-bold text-gray-900">{billings.length}</span> billing(s) for {new Date(selectedDate).toLocaleDateString('en-GB')}
+              <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+                Found <span className="font-bold text-gray-900 dark:text-slate-100">{billings.length}</span> billing(s) for {new Date(selectedDate).toLocaleDateString('en-GB')}
               </p>
               
               {/* Desktop Table View */}
-              <div className="hidden md:block bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
+              <div className="hidden md:block bg-white dark:bg-slate-900 rounded-md shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200">
+                    <thead className="bg-gray-50 dark:bg-slate-800/50 text-gray-600 dark:text-slate-400 font-semibold border-b border-gray-200 dark:border-slate-800">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs">S.No</th>
                         <th className="px-4 py-3 text-left text-xs">Customer</th>
@@ -367,22 +368,22 @@ export default function DayBookPage() {
                         <th className="px-4 py-3 text-center text-xs">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                       {billings.map((billing, index) => (
-                        <tr key={billing._id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-3 text-gray-500">{index + 1}</td>
-                          <td className="px-4 py-3 font-medium text-gray-900">{billing.customerName}</td>
-                          <td className="px-4 py-3 text-gray-600">{billing.mobile || 'N/A'}</td>
-                          <td className="px-4 py-3 font-medium text-gray-900">₹{calculateTotal(billing).toLocaleString()}</td>
-                          <td className="px-4 py-3 text-gray-600">{billing.salesType || 'N/A'}</td>
-                          <td className="px-4 py-3 text-gray-600">{getSalesPersonName(billing.salesPerson)}</td>
-                          <td className="px-4 py-3 text-gray-600">{resolveBranchName(billing.branch)}</td>
-                          <td className="px-4 py-3 text-gray-600">{formatPaymentMode(billing.paymentMode)}</td>
+                        <tr key={billing._id} className="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <td className="px-4 py-3 text-gray-500 dark:text-slate-400">{index + 1}</td>
+                          <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">{billing.customerName}</td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{billing.mobile || 'N/A'}</td>
+                          <td className="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">₹{calculateTotal(billing).toLocaleString()}</td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{billing.salesType || 'N/A'}</td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{getSalesPersonName(billing.salesPerson)}</td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{resolveBranchName(billing.branch)}</td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-slate-300">{formatPaymentMode(billing.paymentMode)}</td>
                           <td className="px-4 py-3">
                             <div className="flex justify-center">
                               <button
                                 onClick={() => setViewingRecord(billing)}
-                                className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors shadow-sm"
+                                className="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-md transition-colors shadow-sm"
                                 title="View Details"
                               >
                                 <Eye className="w-4 h-4" />
@@ -399,42 +400,42 @@ export default function DayBookPage() {
               {/* Mobile Card View */}
               <div className="md:hidden space-y-3">
                 {billings.map((billing, index) => (
-                  <div key={billing._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                  <div key={billing._id} className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-200 dark:border-slate-800 p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-semibold text-gray-500">#{index + 1}</span>
-                          <h3 className="font-semibold text-gray-900">{billing.customerName}</h3>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400">#{index + 1}</span>
+                          <h3 className="font-semibold text-gray-900 dark:text-slate-100">{billing.customerName}</h3>
                         </div>
-                        <p className="text-sm text-gray-600">{billing.mobile || 'N/A'}</p>
+                        <p className="text-sm text-gray-600 dark:text-slate-300">{billing.mobile || 'N/A'}</p>
                       </div>
                       <button
                         onClick={() => setViewingRecord(billing)}
-                        className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                        className="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-md transition-colors"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="text-xs text-gray-500 block">Amount</span>
-                        <span className="font-semibold text-gray-900">₹{calculateTotal(billing).toLocaleString()}</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 block">Amount</span>
+                        <span className="font-semibold text-gray-900 dark:text-slate-100">₹{calculateTotal(billing).toLocaleString()}</span>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500 block">Sales Type</span>
-                        <span className="text-gray-700">{billing.salesType || 'N/A'}</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 block">Sales Type</span>
+                        <span className="text-gray-700 dark:text-slate-200">{billing.salesType || 'N/A'}</span>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500 block">Sales Person</span>
-                        <span className="text-gray-700">{getSalesPersonName(billing.salesPerson)}</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 block">Sales Person</span>
+                        <span className="text-gray-700 dark:text-slate-200">{getSalesPersonName(billing.salesPerson)}</span>
                       </div>
                       <div>
-                        <span className="text-xs text-gray-500 block">Branch</span>
-                        <span className="text-gray-700">{resolveBranchName(billing.branch)}</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 block">Branch</span>
+                        <span className="text-gray-700 dark:text-slate-200">{resolveBranchName(billing.branch)}</span>
                       </div>
                       <div className="col-span-2">
-                        <span className="text-xs text-gray-500 block">Payment Mode</span>
-                        <span className="text-gray-700">{formatPaymentMode(billing.paymentMode)}</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 block">Payment Mode</span>
+                        <span className="text-gray-700 dark:text-slate-200">{formatPaymentMode(billing.paymentMode)}</span>
                       </div>
                     </div>
                   </div>
@@ -461,13 +462,13 @@ export default function DayBookPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-white rounded-md shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+              className="relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-md shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col text-gray-900 dark:text-slate-100"
             >
-              <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
-                <h3 className="text-xl font-bold text-gray-800">Bill Details</h3>
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-slate-100">Bill Details</h3>
                 <button
                   onClick={() => setViewingRecord(null)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

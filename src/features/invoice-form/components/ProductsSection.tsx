@@ -65,12 +65,12 @@ export const ProductsSection = memo(function ProductsSection({
   }, [availableProducts]);
 
   return (
-    <section className="p-6 border rounded-lg shadow bg-white">
-      <h2 className="text-lg font-bold mb-4 text-gray-800">Products</h2>
+    <section className="p-6 border border-gray-200 dark:border-slate-800 rounded-lg shadow bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100">
+      <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-slate-100">Products</h2>
 
       {products.map((product, index) => (
-        <div key={product.id} className="mb-6 p-4 bg-gray-50 rounded border">
-          <h3 className="text-sm font-medium text-gray-700 mb-3 bg-white px-2 py-1 rounded inline-block border">
+        <div key={product.id} className="mb-6 p-4 bg-gray-50 dark:bg-slate-800/50 rounded border border-gray-200 dark:border-slate-700">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-slate-200 mb-3 bg-white dark:bg-slate-900 px-2 py-1 rounded inline-block border border-gray-200 dark:border-slate-700">
             Product {index + 1}{product.model ? ` - ${product.model}` : ''}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

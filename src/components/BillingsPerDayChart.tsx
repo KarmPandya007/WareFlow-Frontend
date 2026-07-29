@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -305,7 +306,7 @@ export default function BillingsPerDayChart({ isAdmin = false, userId, branchId,
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-800 p-6 hover:shadow-xl transition-all duration-300">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
         <div className="flex items-center space-x-3">
@@ -313,29 +314,27 @@ export default function BillingsPerDayChart({ isAdmin = false, userId, branchId,
             <IndianRupee className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100">
               {isAdmin ? 'Daily Revenue' : 'My Daily Revenue'}
             </h3>
-            <p className="text-sm text-gray-600">Total: ₹{totalRevenue.toLocaleString()}</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Total: ₹{totalRevenue.toLocaleString()}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+        <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800/60 p-3 rounded-xl">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">From:</label>
-            <input
-              type="date"
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-300">From:</label>
+            <DatePicker
               value={dateRange.from}
-              onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              onChange={(val) => setDateRange(prev => ({ ...prev, from: val }))}
+              className="w-36"
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">To:</label>
-            <input
-              type="date"
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-300">To:</label>
+            <DatePicker
               value={dateRange.to}
-              onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              onChange={(val) => setDateRange(prev => ({ ...prev, to: val }))}
+              className="w-36"
             />
           </div>
         </div>

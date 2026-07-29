@@ -10,17 +10,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== "undefined") {
         const role = localStorage.getItem("userRole");
-        setUserRole(role?.toLowerCase() || "user");
+        if (role) setUserRole(role.toLowerCase());
     }
   }, []);
 
-  if (!mounted) return null;
-
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-gray-50/50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 transition-colors duration-200">
       <Sidebar 
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen} 

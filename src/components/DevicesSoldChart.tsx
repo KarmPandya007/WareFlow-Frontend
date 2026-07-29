@@ -366,7 +366,7 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-800 p-6 hover:shadow-xl transition-all duration-300">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
         <div className="flex items-center space-x-3">
@@ -374,29 +374,29 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
             <Monitor className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100">
               {isAdmin ? 'Products Sold Daily' : 'My Products Sold Daily'}
             </h3>
-            <p className="text-sm text-gray-600">Product category breakdown over time</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Product category breakdown over time</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl">
+        <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800/60 p-3 rounded-xl">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">From:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-300">From:</label>
             <input
               type="date"
               value={dateRange.from}
               onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+              className="px-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">To:</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-300">To:</label>
             <input
               type="date"
               value={dateRange.to}
               onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+              className="px-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
             />
           </div>
         </div>
@@ -411,43 +411,43 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+        <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-3 border border-green-100 dark:border-green-900/50">
           <div className="flex items-center justify-between mb-2">
-            <Laptop className="w-5 h-5 text-green-600" />
-            <div className="text-lg font-bold text-gray-800">{dailyDevicesData.reduce((sum, d) => sum + d.laptops, 0)}</div>
+            <Laptop className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <div className="text-lg font-bold text-gray-800 dark:text-slate-100">{dailyDevicesData.reduce((sum, d) => sum + d.laptops, 0)}</div>
           </div>
-          <div className="text-xs text-gray-500 mb-1">Laptops</div>
-          <div className="text-base font-bold text-green-600">
+          <div className="text-xs text-gray-500 dark:text-slate-400 mb-1">Laptops</div>
+          <div className="text-base font-bold text-green-600 dark:text-green-400">
             ₹{dailyDevicesData.reduce((sum, d) => sum + d.laptopsRevenue, 0).toLocaleString()}
           </div>
         </div>
-        <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
+        <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg p-3 border border-purple-100 dark:border-purple-900/50">
           <div className="flex items-center justify-between mb-2">
-            <Computer className="w-5 h-5 text-purple-600" />
-            <div className="text-lg font-bold text-gray-800">{dailyDevicesData.reduce((sum, d) => sum + d.desktops, 0)}</div>
+            <Computer className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <div className="text-lg font-bold text-gray-800 dark:text-slate-100">{dailyDevicesData.reduce((sum, d) => sum + d.desktops, 0)}</div>
           </div>
-          <div className="text-xs text-gray-500 mb-1">Desktops</div>
-          <div className="text-base font-bold text-purple-600">
+          <div className="text-xs text-gray-500 dark:text-slate-400 mb-1">Desktops</div>
+          <div className="text-base font-bold text-purple-600 dark:text-purple-400">
             ₹{dailyDevicesData.reduce((sum, d) => sum + d.desktopsRevenue, 0).toLocaleString()}
           </div>
         </div>
-        <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-100">
+        <div className="bg-yellow-50 dark:bg-yellow-950/30 rounded-lg p-3 border border-yellow-100 dark:border-yellow-900/50">
           <div className="flex items-center justify-between mb-2">
-            <Monitor className="w-5 h-5 text-yellow-600" />
-            <div className="text-lg font-bold text-gray-800">{dailyDevicesData.reduce((sum, d) => sum + d.aios, 0)}</div>
+            <Monitor className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+            <div className="text-lg font-bold text-gray-800 dark:text-slate-100">{dailyDevicesData.reduce((sum, d) => sum + d.aios, 0)}</div>
           </div>
-          <div className="text-xs text-gray-500 mb-1">AIOs</div>
-          <div className="text-base font-bold text-yellow-600">
+          <div className="text-xs text-gray-500 dark:text-slate-400 mb-1">AIOs</div>
+          <div className="text-base font-bold text-yellow-600 dark:text-yellow-400">
             ₹{dailyDevicesData.reduce((sum, d) => sum + d.aiosRevenue, 0).toLocaleString()}
           </div>
         </div>
-        <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+        <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3 border border-red-100 dark:border-red-900/50">
           <div className="flex items-center justify-between mb-2">
-            <Gamepad2 className="w-5 h-5 text-red-600" />
-            <div className="text-lg font-bold text-gray-800">{dailyDevicesData.reduce((sum, d) => sum + d.accessories, 0)}</div>
+            <Gamepad2 className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <div className="text-lg font-bold text-gray-800 dark:text-slate-100">{dailyDevicesData.reduce((sum, d) => sum + d.accessories, 0)}</div>
           </div>
-          <div className="text-xs text-gray-500 mb-1">Accessories</div>
-          <div className="text-base font-bold text-red-600">
+          <div className="text-xs text-gray-500 dark:text-slate-400 mb-1">Accessories</div>
+          <div className="text-base font-bold text-red-600 dark:text-red-400">
             ₹{dailyDevicesData.reduce((sum, d) => sum + d.accessoriesRevenue, 0).toLocaleString()}
           </div>
         </div>

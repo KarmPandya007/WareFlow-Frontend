@@ -835,9 +835,7 @@ export default function DashboardPage() {
     }
   }, [recentActivityFull, resolveBranchName, calculateTotalFromRecord, resolvePrice]);
 
-  if (!mounted) {
-    return null;
-  }
+
 
   return (
     <AdminLayout>
@@ -866,7 +864,7 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={() => setShowExportModal(true)}
-                className="bg-white border text-gray-700 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-sm hover:bg-gray-50 transition-all active:scale-95 text-xs sm:text-sm font-semibold"
+                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-all active:scale-95 text-xs sm:text-sm font-semibold"
               >
                 <span className="hidden sm:inline">Export Data</span><span className="sm:hidden">Export</span>
               </button>
@@ -877,77 +875,77 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {loadingTotals ? (
              [...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 animate-pulse">
+                <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 animate-pulse">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
-                      <div className="h-8 bg-gray-200 rounded w-20"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-24 mb-3"></div>
+                      <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-20"></div>
                     </div>
-                    <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+                    <div className="w-12 h-12 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
                   </div>
                 </div>
              ))
           ) : (
             <>
               {/* Today's Bill */}
-              <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+              <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md transition-shadow group">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500">Today's Bills</p>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Today's Bills</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {totals.today.count}
                     </h3>
                   </div>
-                  <div className="p-2 sm:p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors">
-                     <SiGoogledocs className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                  <div className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl group-hover:bg-blue-100 dark:group-hover:bg-blue-900/60 transition-colors">
+                     <SiGoogledocs className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
                
               </div>
 
                {/* Today's Amount */}
-               <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+               <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md transition-shadow group">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500">Today's Revenue</p>
-                    <h3 className="text-xl sm:text-3xl font-bold text-gray-900 mt-2 group-hover:text-emerald-600 transition-colors">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Today's Revenue</p>
+                    <h3 className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       Rs. {totals.today.totalAmount.toLocaleString()}
                     </h3>
                   </div>
-                  <div className="p-2 sm:p-3 bg-emerald-50 rounded-xl group-hover:bg-emerald-100 transition-colors">
-                     <FaSackDollar className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+                  <div className="p-2 sm:p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/60 transition-colors">
+                     <FaSackDollar className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
                 
               </div>
 
                {/* Week's Bill */}
-               <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+               <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md transition-shadow group">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500">Weekly Bills</p>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-2 group-hover:text-violet-600 transition-colors">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Weekly Bills</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                       {totals.week.count}
                     </h3>
                   </div>
-                  <div className="p-2 sm:p-3 bg-violet-50 rounded-xl group-hover:bg-violet-100 transition-colors">
-                     <SiGoogledocs className="w-5 h-5 sm:w-6 sm:h-6 text-violet-600" />
+                  <div className="p-2 sm:p-3 bg-violet-50 dark:bg-violet-950/40 rounded-xl group-hover:bg-violet-100 dark:group-hover:bg-violet-900/60 transition-colors">
+                     <SiGoogledocs className="w-5 h-5 sm:w-6 sm:h-6 text-violet-600 dark:text-violet-400" />
                   </div>
                 </div>
                 
               </div>
 
               {/* Monthly Sales */}
-               <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+               <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md transition-shadow group">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-xs sm:text-sm font-medium text-gray-500">Monthly Revenue</p>
-                    <h3 className="text-xl sm:text-3xl font-bold text-gray-900 mt-2 group-hover:text-orange-600 transition-colors">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Monthly Revenue</p>
+                    <h3 className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                       Rs. {totals.month.totalAmount.toLocaleString()}
                     </h3>
                   </div>
-                  <div className="p-2 sm:p-3 bg-orange-50 rounded-xl group-hover:bg-orange-100 transition-colors">
-                     <FaSackDollar className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+                  <div className="p-2 sm:p-3 bg-orange-50 dark:bg-orange-950/40 rounded-xl group-hover:bg-orange-100 dark:group-hover:bg-orange-900/60 transition-colors">
+                     <FaSackDollar className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400" />
                   </div>
                 </div>
                 
@@ -960,11 +958,11 @@ export default function DashboardPage() {
         {userRole !== 'admin' && <TargetProgress />}
 
         {/* Recent Activity Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-3 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+          <div className="p-3 sm:p-6 border-b border-gray-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-gray-900">Recent Transactions</h2>
-              <p className="text-xs sm:text-sm text-gray-500">Latest billing records</p>
+              <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-slate-100">Recent Transactions</h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">Latest billing records</p>
             </div>
              <div className="relative w-full sm:w-64">
                 <input
@@ -972,7 +970,7 @@ export default function DashboardPage() {
                   placeholder="Search customers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all font-medium"
+                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                 />
             </div>
           </div>
@@ -982,14 +980,14 @@ export default function DashboardPage() {
                <div className="space-y-4">
                  {[...Array(5)].map((_, i) => (
                    <div key={i} className="flex items-center gap-4 animate-pulse">
-                     <div className="h-4 bg-gray-200 rounded w-8"></div>
-                     <div className="h-4 bg-gray-200 rounded flex-1"></div>
-                     <div className="h-4 bg-gray-200 rounded w-32"></div>
-                     <div className="h-4 bg-gray-200 rounded w-24"></div>
-                     <div className="h-4 bg-gray-200 rounded w-24"></div>
-                     <div className="h-4 bg-gray-200 rounded w-32"></div>
-                     <div className="h-4 bg-gray-200 rounded w-20"></div>
-                     <div className="h-8 bg-gray-200 rounded w-32"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-8"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded flex-1"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-32"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-24"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-24"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-32"></div>
+                     <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-20"></div>
+                     <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-32"></div>
                    </div>
                  ))}
                </div>
@@ -999,7 +997,7 @@ export default function DashboardPage() {
             {/* Desktop Table */}
              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                   <thead className="bg-gray-50/50 text-gray-500 font-semibold border-b border-gray-100">
+                   <thead className="bg-gray-50/50 dark:bg-slate-800/50 text-gray-500 dark:text-slate-400 font-semibold border-b border-gray-100 dark:border-slate-800">
                       <tr>
                          <th className="px-6 py-4">S.No</th>
                          <th className="px-6 py-4">Customer</th>
@@ -1011,21 +1009,21 @@ export default function DashboardPage() {
                          <th className="px-6 py-4 text-center">Actions</th>
                       </tr>
                    </thead>
-                   <tbody className="divide-y divide-gray-100">
+                   <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                       {paginatedRecords.map((record, index) => {
                           const fullRecord = recentActivityFull.find((r: any) => r._id === record.id);
                           return (
-                             <tr key={record.id} className="hover:bg-gray-50/50 transition-colors group">
-                                <td className="px-6 py-4 text-gray-500">{startIndex + index + 1}</td>
-                                <td className="px-6 py-4 font-medium text-gray-900">{record.customer}</td>
-                                <td className="px-6 py-4 text-gray-600">{record.salesPerson || '-'}</td>
-                                <td className="px-6 py-4 font-medium text-gray-900">{record.amount}</td>
-                                <td className="px-6 py-4 text-gray-600">
+                             <tr key={record.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+                                <td className="px-6 py-4 text-gray-500 dark:text-slate-400">{startIndex + index + 1}</td>
+                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-slate-100">{record.customer}</td>
+                                <td className="px-6 py-4 text-gray-600 dark:text-slate-300">{record.salesPerson || '-'}</td>
+                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-slate-100">{record.amount}</td>
+                                <td className="px-6 py-4 text-gray-600 dark:text-slate-300">
                                   {resolveBranchName(record.branch) || '-'}
                                 </td>
-                                <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{record.date}</td>
+                                <td className="px-6 py-4 text-gray-500 dark:text-slate-400 whitespace-nowrap">{record.date}</td>
                                 <td className="px-6 py-4">
-                                   <span className="px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-xs font-semibold border border-green-100">
+                                   <span className="px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 text-xs font-semibold border border-green-100 dark:border-green-900">
                                       Completed
                                    </span>
                                 </td>
@@ -1033,7 +1031,7 @@ export default function DashboardPage() {
                                    <div className="flex items-center justify-center gap-3">
                                         <button 
                                           onClick={() => handleViewRecord(fullRecord)}
-                                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                                          className="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
                                           title="View Details"
                                         >
                                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1043,7 +1041,7 @@ export default function DashboardPage() {
                                         </button>
                                         <button 
                                           onClick={() => downloadXML(record.id)}
-                                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 bg-orange-50 border border-orange-100 rounded-lg hover:bg-orange-100 hover:shadow-sm transition-all active:scale-95"
+                                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/60 transition-all active:scale-95"
                                           title="Download XML"
                                         >
                                           <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
@@ -1051,7 +1049,7 @@ export default function DashboardPage() {
                                         </button>
                                         <button 
                                           onClick={() => downloadExcel(record.id)}
-                                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg hover:bg-emerald-100 hover:shadow-sm transition-all active:scale-95"
+                                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all active:scale-95"
                                           title="Download Excel"
                                         >
                                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -1067,19 +1065,19 @@ export default function DashboardPage() {
              </div>
              
              {/* Mobile Cards */}
-             <div className="md:hidden divide-y divide-gray-100">
+             <div className="md:hidden divide-y divide-gray-100 dark:divide-slate-800">
                {paginatedRecords.map((record, index) => {
                  const fullRecord = recentActivityFull.find((r: any) => r._id === record.id);
                  return (
-                   <div key={record.id} className="p-4 hover:bg-gray-50">
+                   <div key={record.id} className="p-4 hover:bg-gray-50 dark:hover:bg-slate-800/50">
                      <div className="flex justify-between items-start mb-3">
                        <div className="flex-1">
-                         <div className="font-semibold text-gray-900 text-sm">{record.customer}</div>
-                         <div className="text-xs text-gray-500 mt-1">{record.salesPerson || '-'}</div>
+                         <div className="font-semibold text-gray-900 dark:text-slate-100 text-sm">{record.customer}</div>
+                         <div className="text-xs text-gray-500 dark:text-slate-400 mt-1">{record.salesPerson || '-'}</div>
                        </div>
                        <div className="text-right">
-                         <div className="font-bold text-gray-900 text-sm">{record.amount}</div>
-                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs font-semibold border border-green-100">
+                         <div className="font-bold text-gray-900 dark:text-slate-100 text-sm">{record.amount}</div>
+                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 text-xs font-semibold border border-green-100 dark:border-green-900">
                            Completed
                          </span>
                        </div>
@@ -1087,19 +1085,19 @@ export default function DashboardPage() {
                      
                      <div className="space-y-1.5 text-xs mb-3">
                        <div>
-                         <span className="text-gray-500">Branch:</span>
-                         <span className="ml-1 text-gray-700 font-medium">{resolveBranchName(record.branch) || '-'}</span>
+                         <span className="text-gray-500 dark:text-slate-400">Branch:</span>
+                         <span className="ml-1 text-gray-700 dark:text-slate-200 font-medium">{resolveBranchName(record.branch) || '-'}</span>
                        </div>
                        <div>
-                         <span className="text-gray-500">Date:</span>
-                         <span className="ml-1 text-gray-700 font-medium">{record.date}</span>
+                         <span className="text-gray-500 dark:text-slate-400">Date:</span>
+                         <span className="ml-1 text-gray-700 dark:text-slate-200 font-medium">{record.date}</span>
                        </div>
                      </div>
                      
                      <div className="flex gap-2">
                        <button 
                          onClick={() => handleViewRecord(fullRecord)}
-                         className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all"
+                         className="p-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-lg transition-all"
                        >
                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1108,14 +1106,14 @@ export default function DashboardPage() {
                        </button>
                        <button 
                          onClick={() => downloadXML(record.id)}
-                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 bg-orange-50 border border-orange-100 rounded-lg hover:bg-orange-100 transition-all"
+                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/60 transition-all"
                        >
                          <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                          XML
                        </button>
                        <button 
                          onClick={() => downloadExcel(record.id)}
-                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg hover:bg-emerald-100 transition-all"
+                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all"
                        >
                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                          Excel
@@ -1130,21 +1128,21 @@ export default function DashboardPage() {
           
           {/* Footer Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between p-3 sm:p-4 border-t border-gray-100">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-t border-gray-100 dark:border-slate-800">
                <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                >
                   <span className="hidden sm:inline">Previous</span><span className="sm:hidden">Prev</span>
                </button>
-               <span className="text-xs sm:text-sm text-gray-500">
+               <span className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">
                   Page {currentPage} of {totalPages}
                </span>
                <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                >
                   Next
                </button>
@@ -1162,24 +1160,24 @@ export default function DashboardPage() {
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl"
+            className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md m-4 shadow-xl text-gray-900 dark:text-slate-100"
           >
             <h3 className="text-xl font-bold mb-4">Export Billing Data</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">From Date</label>
                 <input 
                   type="date"
-                  className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                  className="w-full p-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
                   value={exportFilters.fromDate}
                   onChange={(e) => setExportFilters(prev => ({ ...prev, fromDate: e.target.value }))}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">To Date</label>
                 <input 
                   type="date" 
-                  className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                  className="w-full p-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
                   value={exportFilters.toDate}
                   onChange={(e) => setExportFilters(prev => ({ ...prev, toDate: e.target.value }))}
                 />
@@ -1187,7 +1185,7 @@ export default function DashboardPage() {
               <div className="flex gap-3 mt-6">
                 <button 
                   onClick={() => handleExport("csv")}
-                  className="flex-1 bg-green-50 text-green-700 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-100 transition-colors"
+                  className="flex-1 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300 border border-green-100 dark:border-green-900 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-100 dark:hover:bg-green-900/60 transition-colors"
                 >
                   Download CSV
                 </button>
@@ -1201,7 +1199,7 @@ export default function DashboardPage() {
             </div>
             <button 
               onClick={() => setShowExportModal(false)}
-              className="mt-4 w-full text-center text-gray-500 text-sm hover:text-gray-700"
+              className="mt-4 w-full text-center text-gray-500 dark:text-slate-400 text-sm hover:text-gray-700 dark:hover:text-slate-200"
             >
               Cancel
             </button>
@@ -1227,17 +1225,17 @@ export default function DashboardPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+              className="relative bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col text-gray-900 dark:text-slate-100"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
-                <h3 className="text-xl font-bold text-gray-800">Bill Details</h3>
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-slate-100">Bill Details</h3>
                 <button
                   onClick={() => {
                     setViewingRecord(null);
                     setFetchedProductDetails([]);
                   }}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1250,78 +1248,78 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Customer Details */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                       Customer Information
                     </h3>
-                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-3">
+                    <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Name</span>
-                        <span className="text-base font-medium text-gray-900">{viewingRecord.customerName}</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Name</span>
+                        <span className="text-base font-medium text-gray-900 dark:text-slate-100">{viewingRecord.customerName}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Mobile</span>
-                          <span className="text-sm text-gray-700">{viewingRecord.mobile || 'N/A'}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Mobile</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.mobile || 'N/A'}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Phone</span>
-                          <span className="text-sm text-gray-700">{viewingRecord.phone || 'N/A'}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Phone</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.phone || 'N/A'}</span>
                         </div>
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Email</span>
-                        <span className="text-sm text-gray-700">{viewingRecord.email || 'N/A'}</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Email</span>
+                        <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.email || 'N/A'}</span>
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Address</span>
-                        <span className="text-sm text-gray-700">{viewingRecord.address || 'N/A'}</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Address</span>
+                        <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.address || 'N/A'}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Pin Code</span>
-                          <span className="text-sm text-gray-700">{viewingRecord.pinCode || 'N/A'}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Pin Code</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.pinCode || 'N/A'}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">GST Number</span>
-                          <span className="text-sm text-gray-700">{viewingRecord.gstNumber || 'N/A'}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">GST Number</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.gstNumber || 'N/A'}</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   {/* Transaction Details */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 022-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                       Transaction Details
                     </h3>
-                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-3">
+                    <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Date</span>
-                          <span className="text-sm text-gray-700">{new Date(viewingRecord.date).toLocaleDateString('en-US', { dateStyle: 'medium' })}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Date</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{new Date(viewingRecord.date).toLocaleDateString('en-US', { dateStyle: 'medium' })}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Sales Type</span>
-                          <span className="text-sm text-gray-700">{viewingRecord.salesType || 'Retail'}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Sales Type</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{viewingRecord.salesType || 'Retail'}</span>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Branch</span>
-                          <span className="text-sm text-gray-700">{resolveBranchName(viewingRecord.branch)}</span>
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Branch</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">{resolveBranchName(viewingRecord.branch)}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Sales Person</span>
-                          <span className="text-sm text-gray-700">
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Sales Person</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">
                             {viewingRecord.salesPerson ? `${viewingRecord.salesPerson.firstName} ${viewingRecord.salesPerson.lastName}` : 'Admin'}
                           </span>
                         </div>
                       </div>
                       {viewingRecord.referralSource && (
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Referral Source</span>
-                          <span className="text-sm text-gray-700">
+                          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase block">Referral Source</span>
+                          <span className="text-sm text-gray-700 dark:text-slate-200">
                             {viewingRecord.referralSource === 'Any other' && viewingRecord.referralSourceOther 
                               ? viewingRecord.referralSourceOther 
                               : viewingRecord.referralSource}
@@ -1334,29 +1332,29 @@ export default function DashboardPage() {
 
                 {/* Payment Information */}
                 <div className="space-y-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-slate-400 flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                         Payment Information
                     </h3>
-                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 space-y-3">
+                    <div className="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
                         {Array.isArray(viewingRecord.paymentMode) && viewingRecord.paymentMode.length > 0 ? (
                             viewingRecord.paymentMode.map((payment: any, idx: number) => (
-                                <div key={idx} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                <div key={idx} className="p-4 bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800 shadow-sm">
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="font-bold text-gray-900 text-base">{payment.mode}</span>
-                                        <span className="font-bold text-blue-600 text-lg">₹{payment.amount?.toLocaleString()}</span>
+                                        <span className="font-bold text-gray-900 dark:text-slate-100 text-base">{payment.mode}</span>
+                                        <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">₹{payment.amount?.toLocaleString()}</span>
                                     </div>
                                     {payment.mode === 'Bank' && (
-                                        <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                            {payment.bankType && <div className="flex justify-between"><span className="text-gray-500">Bank Type:</span><span className="text-gray-700 font-medium">{payment.bankType}</span></div>}
-                                            {payment.utrNumber && <div className="flex justify-between"><span className="text-gray-500">UTR Number:</span><span className="text-gray-700 font-medium">{payment.utrNumber}</span></div>}
-                                            {payment.chequeNumber && <div className="flex justify-between"><span className="text-gray-500">Cheque Number:</span><span className="text-gray-700 font-medium">{payment.chequeNumber}</span></div>}
+                                        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                            {payment.bankType && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Bank Type:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{payment.bankType}</span></div>}
+                                            {payment.utrNumber && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">UTR Number:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{payment.utrNumber}</span></div>}
+                                            {payment.chequeNumber && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Cheque Number:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{payment.chequeNumber}</span></div>}
                                         </div>
                                     )}
                                     {payment.mode === 'UPI' && (
-                                        <div className="mt-2 pt-2 border-t border-gray-100 space-y-1 text-sm">
-                                            {payment.upiProvider && <div className="flex justify-between"><span className="text-gray-500">UPI Provider:</span><span className="text-gray-700 font-medium">{payment.upiProvider}</span></div>}
-                                            {payment.upiTransactionId && <div className="flex justify-between"><span className="text-gray-500">Transaction ID:</span><span className="text-gray-700 font-medium">{payment.upiTransactionId}</span></div>}
+                                        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-slate-800 space-y-1 text-sm">
+                                            {payment.upiProvider && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">UPI Provider:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{payment.upiProvider}</span></div>}
+                                            {payment.upiTransactionId && <div className="flex justify-between"><span className="text-gray-500 dark:text-slate-400">Transaction ID:</span><span className="text-gray-700 dark:text-slate-200 font-medium">{payment.upiTransactionId}</span></div>}
                                         </div>
                                     )}
                                     {payment.mode === 'Machine' && (
