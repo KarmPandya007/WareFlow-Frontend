@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import dynamic from "next/dynamic";
 import AdminLayout from "@/components/AdminLayout";
 import { FaSackDollar } from "react-icons/fa6";
 import { SiGoogledocs } from "react-icons/si";
@@ -8,9 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getApiUrl } from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { logger } from "@/lib/logger";
-
-// Lazy load heavy components
-const TargetProgress = dynamic(() => import("@/components/TargetProgress"), { ssr: false });
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState("Admin");
@@ -37,8 +33,6 @@ export default function DashboardPage() {
     toDate: "",
   });
   const [branches, setBranches] = useState<any[]>([]);
-  const [userRole, setUserRole] = useState<string>('');
-
   const [availableProducts, setAvailableProducts] = useState<any[]>([]);
 
   const itemsPerPage = 8;
@@ -129,7 +123,6 @@ export default function DashboardPage() {
       }
       const storedName = localStorage.getItem("userName");
       if (storedName) setUserName(storedName);
-      setUserRole(role || '');
     }
 
     setMounted(true);
@@ -793,9 +786,6 @@ export default function DashboardPage() {
             </>
           )}
         </div>
-
-        {/* Target Progress Section - Only show for non-admin users */}
-        {userRole !== 'admin' && <TargetProgress />}
 
         {/* Recent Activity Table */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">

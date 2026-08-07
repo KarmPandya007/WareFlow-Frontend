@@ -2,6 +2,20 @@ import "./globals.css";
 import ToasterClient from "@/components/ToasterClient";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { StoreProvider } from "@/redux/provider";
+import PageTitle from "@/components/PageTitle";
+import type { Metadata } from "next";
+import wareFlowLogo from "@/logo/image.png";
+
+export const metadata: Metadata = {
+  title: "WareFlow",
+  description: "WareFlow billing and inventory management",
+  applicationName: "WareFlow",
+  icons: {
+    icon: [{ url: wareFlowLogo.src, type: "image/png" }],
+    shortcut: wareFlowLogo.src,
+    apple: wareFlowLogo.src,
+  },
+};
 
 export default function RootLayout({
   children,
@@ -20,6 +34,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="bg-background text-foreground transition-colors duration-200">
         <StoreProvider>
           <ThemeProvider>
+            <PageTitle />
             {children}
             <ToasterClient />
           </ThemeProvider>
@@ -28,4 +43,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -6,7 +6,7 @@ import { getApiUrl } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
-  AlertTriangle, Bot, Loader2, Menu, MoreHorizontal,
+  AlertTriangle, Bot, ChevronLeft, ChevronRight, Loader2, Menu, MoreHorizontal,
   Pencil, Plus, Search, SendHorizonal, Sparkles, Trash2, User, X,
 } from "lucide-react";
 
@@ -64,6 +64,7 @@ export default function AiAssistantPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [historyCollapsed, setHistoryCollapsed] = useState(false);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<ConversationDialog>(null);
   const [renameTitle, setRenameTitle] = useState("");
@@ -300,12 +301,26 @@ export default function AiAssistantPage() {
     <AdminLayout>
       <>
       <div className="relative flex h-[calc(100dvh-6.5rem)] min-h-[38rem] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="hidden md:block">{historyPanel}</div>
-        {sidebarOpen && <><button aria-label="Close history" className="absolute inset-0 z-30 bg-black/40 md:hidden" onClick={() => setSidebarOpen(false)} /><div className="absolute inset-y-0 left-0 z-40 md:hidden">{historyPanel}</div></>}
+        <div className={`hidden shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out md:block ${historyCollapsed ? "w-0" : "w-[18rem]"}`}>
+          <div className={`h-full transition-transform duration-300 ease-in-out ${historyCollapsed ? "-translate-x-full" : "translate-x-0"}`}>{historyPanel}</div>
+        </div>
+        <button
+          onClick={() => setHistoryCollapsed((collapsed) => !collapsed)}
+          aria-label={historyCollapsed ? "Open chat history" : "Close chat history"}
+          title={historyCollapsed ? "Open chat history" : "Close chat history"}
+          className={`absolute top-1/2 z-30 hidden h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-md transition-[left,color,background-color,border-color] duration-300 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 md:flex dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:border-orange-700 dark:hover:bg-orange-950/40 dark:hover:text-orange-400 ${historyCollapsed ? "left-4" : "left-[18rem]"}`}
+        >
+          {historyCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
+        <button aria-label="Close history" className={`absolute inset-0 z-30 bg-black/40 transition-opacity duration-300 md:hidden ${sidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setSidebarOpen(false)} />
+        <div className={`absolute inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out md:hidden ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>{historyPanel}</div>
 
         <main className="flex min-w-0 flex-1 flex-col bg-white dark:bg-neutral-900">
           <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 px-4 dark:border-neutral-800">
-            <div className="flex min-w-0 items-center gap-3"><button onClick={() => setSidebarOpen(true)} className="rounded-lg p-2 hover:bg-gray-100 md:hidden dark:hover:bg-neutral-800"><Menu className="h-5 w-5" /></button><div><h1 className="truncate font-semibold text-gray-900 dark:text-white">{conversations.find((item) => item._id === activeId)?.title || "New chat"}</h1><p className="text-[11px] text-gray-400">Business analytics · Read-only</p></div></div>
+            <div className="flex min-w-0 items-center gap-3">
+              <button onClick={() => setSidebarOpen(true)} aria-label="Open chat history" className="rounded-lg p-2 hover:bg-gray-100 md:hidden dark:hover:bg-neutral-800"><Menu className="h-5 w-5" /></button>
+              <div><h1 className="truncate font-semibold text-gray-900 dark:text-white">{conversations.find((item) => item._id === activeId)?.title || "New chat"}</h1><p className="text-[11px] text-gray-400">Business analytics · Read-only</p></div>
+            </div>
             <button onClick={newChat} className="rounded-xl p-2 text-gray-500 hover:bg-orange-50 hover:text-orange-600 md:hidden"><Plus className="h-5 w-5" /></button>
           </header>
 

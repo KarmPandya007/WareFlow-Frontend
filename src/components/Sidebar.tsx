@@ -62,9 +62,9 @@
 //           <div className="h-16 flex items-center px-6 border-b border-gray-100">
 //             <div className="flex items-center gap-2 font-bold text-xl text-blue-600 tracking-tight">
 //               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white text-lg">
-//                 HP
+//                 WF
 //               </div>
-//               <span>Billing</span>
+//               <span>WareFlow</span>
 //             </div>
 //           </div>
 
@@ -188,9 +188,9 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
           <div className="h-16 flex items-center px-6 border-b border-gray-100 dark:border-slate-800">
             <div className="flex items-center gap-2 font-bold text-xl text-blue-600 dark:text-blue-400 tracking-tight">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white text-lg">
-                HP
+                WF
               </div>
-              <span>Billing</span>
+              <span>WareFlow</span>
             </div>
           </div>
 

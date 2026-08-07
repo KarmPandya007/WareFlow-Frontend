@@ -73,7 +73,7 @@ const LoginForm = () => {
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
             <div className="bg-gradient-to-br from-blue-600 to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20 transform rotate-[-6deg] hover:rotate-0 transition-transform duration-300">
-               <span className="text-white text-2xl font-bold">HP</span>
+               <span className="text-white text-2xl font-bold">WF</span>
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100 tracking-tight mb-2">Welcome Back</h1>
@@ -160,7 +160,7 @@ const LoginForm = () => {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-gray-400 dark:text-slate-500 text-sm">
-            &copy; {new Date().getFullYear()} HP Computer Billing
+            &copy; {new Date().getFullYear()} WareFlow
           </p>
         </div>
       </div>
