@@ -131,9 +131,7 @@ export default function BillingPage() {
       params.append('sortOrder', sortDirection);
 
       const response = await fetch(`${getApiUrl()}/api/billing?${params.toString()}`, {
-        method: 'GET',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
       });
 
       if (!response.ok) {

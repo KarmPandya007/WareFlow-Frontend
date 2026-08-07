@@ -185,11 +185,7 @@ export default function InventoryTransferPage() {
     try {
       setIsLoadingGodowns(true);
       const response = await fetch(`${getApiUrl()}/api/godowns/all`, {
-        method: 'GET',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
       if (response.ok) {
         const result = await response.json();
@@ -221,11 +217,7 @@ export default function InventoryTransferPage() {
     try {
       setIsLoadingProducts(true);
       const response = await fetch(`${getApiUrl()}/api/products`, {
-        method: 'GET',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
       if (response.ok) {
         const result = await response.json();
@@ -267,11 +259,7 @@ export default function InventoryTransferPage() {
     try {
       setIsLoadingBranches(true);
       const response = await fetch(`${getApiUrl()}/api/branches/`, {
-        method: 'GET',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
 
       if (response.ok) {
@@ -300,11 +288,7 @@ export default function InventoryTransferPage() {
         limit: itemsPerPage.toString()
       });
       const response = await fetch(`${getApiUrl()}/api/inventory-transfers/all?${params.toString()}`, {
-        method: 'GET',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
       if (response.ok) {
         const result = await response.json();

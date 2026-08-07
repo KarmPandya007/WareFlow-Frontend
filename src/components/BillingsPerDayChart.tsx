@@ -31,51 +31,14 @@ export default function BillingsPerDayChart({ isAdmin = false, userId, branchId,
   const isDarkTheme = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   const [billingRecords, setBillingRecords] = useState<any[]>([]);
   const [previousRevenue, setPreviousRevenue] = useState(0);
-  const [availableProducts, setAvailableProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     fetchBillingData();
   }, [isAdmin, userId, branchId, salesPersonId, dateRange]);
 
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch(`${getApiUrl()}/api/products`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      
-      let productsArray: any[] = [];
-      if (data && data.success && data.products) {
-        productsArray = [
-          ...(data.products.laptops || []),
-          ...(data.products.desktops || []),
-          ...(data.products.aios || []),
-          ...(data.products.accessories || [])
-        ];
-      }
-      
-      const normalizedProducts = (productsArray || []).map((item: any) => {
-        const rawSupported = item.supportedAmount ?? item.supportedamount ?? item.supportedT2DBP ?? item.srp ?? item.price ?? item.sellingPrice ?? item.rate ?? item.amount;
-        const supportedAmount = rawSupported !== undefined && rawSupported !== null && !isNaN(Number(rawSupported)) ? Number(rawSupported) : undefined;
-        const model = (item.model || item.modelNo || item.name || item.productName || item.itemName || '').toString();
-        return { ...item, supportedAmount, model };
-      });
-      
-      setAvailableProducts(normalizedProducts);
-    } catch (err) {
-      console.error('Error fetching products:', err);
-      setAvailableProducts([]);
-    }
-  };
-
   const fetchBillingData = async () => {
     setIsLoading(true);
     try {
-      await fetchProducts();
-      
       const fromTime = new Date(`${dateRange.from}T00:00:00Z`).getTime();
       const toTime = new Date(`${dateRange.to}T00:00:00Z`).getTime();
       const rangeDays = Math.max(1, Math.round((toTime - fromTime) / 86400000) + 1);
@@ -85,65 +48,38 @@ export default function BillingsPerDayChart({ isAdmin = false, userId, branchId,
         from: previousFrom.toISOString().slice(0, 10),
         to: previousTo.toISOString().slice(0, 10),
       };
-      const params = new URLSearchParams({ fromDate: dateRange.from, toDate: dateRange.to, limit: '10000' });
-      const previousParams = new URLSearchParams({ fromDate: previousRange.from, toDate: previousRange.to, limit: '10000' });
-      const requestOptions = {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      } as RequestInit;
+      const selectedUserId = salesPersonId || userId;
+      const makeParams = (startDate: string, endDate: string) => {
+        const params = new URLSearchParams({ startDate, endDate });
+        if (branchId) params.set('branchId', branchId);
+        if (selectedUserId) params.set('userId', selectedUserId);
+        return params;
+      };
+      const params = makeParams(dateRange.from, dateRange.to);
+      const previousParams = makeParams(previousRange.from, previousRange.to);
+      const requestOptions = { credentials: 'include' } as RequestInit;
       const [response, previousResponse] = await Promise.all([
-        fetch(`${getApiUrl()}/api/billing?${params.toString()}`, requestOptions),
-        fetch(`${getApiUrl()}/api/billing?${previousParams.toString()}`, requestOptions),
+        fetch(`${getApiUrl()}/api/billing-analytics/daily?${params.toString()}`, requestOptions),
+        fetch(`${getApiUrl()}/api/billing-analytics/daily?${previousParams.toString()}`, requestOptions),
       ]);
 
       if (response.ok) {
         const result = await response.json();
-        if (result.success && result.billings) {
-          const billings = result.billings;
+        if (result.success && Array.isArray(result.data)) {
           const dailyMap = new Map<string, { revenue: number; invoices: number }>();
-
-          const matchesSelectedFilters = (billing: any) => {
-            if (branchId) {
-              const recordBranchId = typeof billing.branch === 'string' ? billing.branch : billing.branch?._id;
-              if (String(recordBranchId) !== String(branchId)) return false;
-            }
-            if (salesPersonId) {
-              const recordSalesPersonId = typeof billing.salesPerson === 'object' && billing.salesPerson !== null
-                ? billing.salesPerson._id || billing.salesPerson.id
-                : billing.salesPerson;
-              if (!recordSalesPersonId || String(recordSalesPersonId) !== String(salesPersonId)) return false;
-            }
-            return true;
-          };
-
-          const getRecordDate = (billing: any) => {
-            const raw = billing.date || billing.createdAt;
-            if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
-            const parsed = new Date(raw);
-            return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString().slice(0, 10);
-          };
-          
-          billings.forEach((billing: any) => {
-            const dateStr = getRecordDate(billing);
-            
-            if (dateRange.from && dateStr < dateRange.from) return;
-            if (dateRange.to && dateStr > dateRange.to) return;
-            if (!matchesSelectedFilters(billing)) return;
-            
-            const revenue = Number(billing.totalAmount) || calculateTotalFromProducts(billing);
-            const current = dailyMap.get(dateStr) || { revenue: 0, invoices: 0 };
-            dailyMap.set(dateStr, { revenue: current.revenue + revenue, invoices: current.invoices + 1 });
+          result.data.forEach((day: any) => {
+            dailyMap.set(day.date, {
+              revenue: Number(day.totalAmount) || 0,
+              invoices: Number(day.count) || 0,
+            });
           });
 
           if (previousResponse.ok) {
             const previousResult = await previousResponse.json();
-            const previousBillings = previousResult.billings || [];
-            const total = previousBillings.reduce((sum: number, billing: any) => {
-              const dateStr = getRecordDate(billing);
-              if (dateStr < previousRange.from || dateStr > previousRange.to || !matchesSelectedFilters(billing)) return sum;
-              return sum + (Number(billing.totalAmount) || calculateTotalFromProducts(billing));
-            }, 0);
+            const total = (previousResult.data || []).reduce(
+              (sum: number, day: any) => sum + (Number(day.totalAmount) || 0),
+              0
+            );
             setPreviousRevenue(total);
           } else {
             setPreviousRevenue(0);
@@ -170,69 +106,6 @@ export default function BillingsPerDayChart({ isAdmin = false, userId, branchId,
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const getProductsFromRecord = (record: any) => {
-    if (!record) return [];
-    if (Array.isArray(record.products) && record.products.length > 0) return record.products;
-    if (Array.isArray(record.productDetails) && record.productDetails.length > 0) return record.productDetails;
-    if (Array.isArray(record.product_details) && record.product_details.length > 0) return record.product_details;
-    if (Array.isArray(record.items) && record.items.length > 0) return record.items;
-    if (Array.isArray(record.productsList) && record.productsList.length > 0) return record.productsList;
-    return [];
-  };
-
-  const resolvePrice = (p: any) => {
-    if (!p) return 0;
-    const possibleKeys = [p._id, p.apiProductId, p.productId, p.id, p.model, p.name, p.productName, p.itemName].filter(key => key && typeof key === 'string' && key.trim().length > 0);
-    
-    if (availableProducts && availableProducts.length > 0) {
-      for (const key of possibleKeys) {
-        const found = availableProducts.find((ap: any) => {
-          const productKeys = [ap._id, ap.apiProductId, ap.productId, ap.id, ap.model, ap.name, ap.productName, ap.itemName].filter(pk => pk && typeof pk === 'string' && pk.trim().length > 0);
-          return productKeys.some(pk => pk.toLowerCase() === key.toLowerCase());
-        });
-        if (found) {
-          const priceFields = ['supportedAmount', 'srp', 'price', 'sellingPrice', 'rate', 'amount', 'cost', 'value'];
-          for (const field of priceFields) {
-            const value = found[field];
-            if (value !== undefined && value !== null && !isNaN(Number(value))) {
-              const numValue = Number(value);
-              if (numValue > 0) return numValue;
-            }
-          }
-        }
-      }
-    }
-    
-    if (typeof p === 'object') {
-      const priceFields = ['supportedAmount', 'supportedamount', 'price', 'sellingPrice', 'srp', 'rate', 'amount', 'cost', 'value', 't2DBP'];
-      for (const field of priceFields) {
-        const value = p[field];
-        if (value !== undefined && value !== null && !isNaN(Number(value))) {
-          const numValue = Number(value);
-          if (numValue > 0) return numValue;
-        }
-      }
-    }
-    return 0;
-  };
-
-  const calculateTotalFromProducts = (record: any) => {
-    // Use totalAmount from API if available
-    if (record.totalAmount && !isNaN(Number(record.totalAmount))) {
-      return Number(record.totalAmount);
-    }
-    
-    // Fallback to calculating from products
-    const products = getProductsFromRecord(record);
-    let total = 0;
-    products.forEach((p: any) => {
-      const qty = Number(p?.quantity ?? p?.qty ?? 1) || 1;
-      const price = resolvePrice(p);
-      total += price * qty;
-    });
-    return total;
   };
 
   const dailyRevenueData = useMemo(() => {

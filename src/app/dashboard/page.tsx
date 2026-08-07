@@ -35,7 +35,6 @@ export default function DashboardPage() {
     toDate: "",
   });
   const [branches, setBranches] = useState<any[]>([]);
-  const [availableProducts, setAvailableProducts] = useState<any[]>([]);
 
   const itemsPerPage = 8;
 
@@ -160,11 +159,10 @@ export default function DashboardPage() {
       
       try {
         // Execute all API calls in parallel
-        const [totalsRes, branchesRes, activitiesRes, productsRes] = await Promise.all([
+        const [totalsRes, branchesRes, activitiesRes] = await Promise.all([
           fetch(`${getApiUrl()}/api/admin/dashboard/totals`, { credentials: "include" }),
           fetch(`${getApiUrl()}/api/branches`, { credentials: "include" }),
-          fetch(`${getApiUrl()}/api/billing`, { credentials: "include" }),
-          fetch(`${getApiUrl()}/api/products`, { credentials: "include" })
+          fetch(`${getApiUrl()}/api/admin/dashboard/recent-activities?limit=10`, { credentials: "include" })
         ]);
 
         // Process totals
@@ -186,23 +184,10 @@ export default function DashboardPage() {
           setBranches(branchesData);
         }
 
-        // Process products
-        const productsData = await productsRes.json();
-        if (productsData && productsData.products) {
-          const all = [
-            ...(productsData.products.laptops || []),
-            ...(productsData.products.desktops || []),
-            ...(productsData.products.aios || [])
-          ];
-          setAvailableProducts(all);
-        } else if (Array.isArray(productsData)) {
-          setAvailableProducts(productsData);
-        }
-
         // Process activities
         const activitiesData = await activitiesRes.json();
         if (activitiesData.success) {
-          const sortedBillings = [...activitiesData.billings].sort((a: any, b: any) => {
+          const sortedBillings = [...(activitiesData.activities || [])].sort((a: any, b: any) => {
             const aTime = new Date(a.createdAt || a.date || 0).getTime();
             const bTime = new Date(b.createdAt || b.date || 0).getTime();
             return bTime - aTime;
@@ -243,22 +228,13 @@ export default function DashboardPage() {
   const resolvePrice = useCallback((p: any) => {
     if (!p) return 0;
 
-    const key = p._id || p.apiProductId || p.model || p.name || '';
-    if (key && availableProducts && availableProducts.length > 0) {
-      const found = availableProducts.find((ap: any) => ap._id === key || ap.model === key || ap.name === key);
-      if (found) {
-        const v = found.supportedAmount ?? found.srp ?? found.price ?? found.sellingPrice ?? found.rate ?? found.amount ?? 0;
-        if (v && !isNaN(Number(v))) return Number(v);
-      }
-    }
-
     if (typeof p === 'object') {
       const val = p.supportedAmount ?? p.supportedamount ?? p.price ?? p.sellingPrice ?? p.srp ?? p.rate ?? p.amount ?? p.t2DBP ?? 0;
       if (val && !isNaN(Number(val))) return Number(val);
     }
 
     return 0;
-  }, [availableProducts]);
+  }, []);
 
   // Memoize calculate total function
   const calculateTotalFromRecord = useCallback((record: any) => {

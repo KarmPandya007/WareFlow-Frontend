@@ -27,146 +27,31 @@ interface DevicesSoldChartProps {
 }
 
 export default function DevicesSoldChart({ isAdmin = false, userId, branchId, salesPersonId, dateRange }: DevicesSoldChartProps) {
-  const [billingRecords, setBillingRecords] = useState<any[]>([]);
-  const [availableProducts, setAvailableProducts] = useState<any[]>([]);
+  const [deviceRecords, setDeviceRecords] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    fetchProducts();
     fetchBillingData();
   }, [isAdmin, userId, branchId, salesPersonId, dateRange]);
-
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch(`${getApiUrl()}/api/products`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      
-      let productsArray: any[] = [];
-      if (data && data.success && data.products) {
-        productsArray = [
-          ...(data.products.laptops || []),
-          ...(data.products.desktops || []),
-          ...(data.products.aios || []),
-          ...(data.products.accessories || [])
-        ];
-      }
-      setAvailableProducts(productsArray);
-    } catch (err) {
-      console.error('Error fetching products:', err);
-    }
-  };
 
   const fetchBillingData = async () => {
     setIsLoading(true);
     try {
-      const params = new URLSearchParams({ fromDate: dateRange.from, toDate: dateRange.to, limit: '10000' });
-      const response = await fetch(`${getApiUrl()}/api/billing/?${params.toString()}`, {
-        method: 'GET',
+      const params = new URLSearchParams({ startDate: dateRange.from, endDate: dateRange.to });
+      if (branchId) params.set('branchId', branchId);
+      if (salesPersonId || userId) params.set('userId', salesPersonId || userId || '');
+      const response = await fetch(`${getApiUrl()}/api/billing-analytics/devices?${params.toString()}`, {
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
         const data = await response.json();
-        if (data.success) {
-          let filteredBillings = data.billings || [];
-          
-          // Filter by branch if specified
-          if (branchId) {
-            filteredBillings = filteredBillings.filter((b: any) => {
-              const billBranch = typeof b.branch === 'object' ? b.branch?._id : b.branch;
-              return billBranch === branchId;
-            });
-          }
-          
-          // Filter by salesPerson if specified
-          if (salesPersonId) {
-            filteredBillings = filteredBillings.filter((b: any) => {
-              let billSalesPerson = null;
-              if (typeof b.salesPerson === 'object' && b.salesPerson !== null) {
-                billSalesPerson = b.salesPerson._id || b.salesPerson.id;
-              } else if (typeof b.salesPerson === 'string') {
-                billSalesPerson = b.salesPerson;
-              }
-              return billSalesPerson && String(billSalesPerson) === String(salesPersonId);
-            });
-          }
-          
-          setBillingRecords(filteredBillings);
-        }
+        if (data.success) setDeviceRecords(data.data || []);
       }
     } catch (error) {
       console.error('Error fetching billing data:', error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const getProductsFromRecord = (record: any) => {
-    if (!record) return [];
-    if (Array.isArray(record.products) && record.products.length > 0) return record.products;
-    if (Array.isArray(record.productDetails) && record.productDetails.length > 0) return record.productDetails;
-    if (Array.isArray(record.product_details) && record.product_details.length > 0) return record.product_details;
-    if (Array.isArray(record.items) && record.items.length > 0) return record.items;
-    if (Array.isArray(record.productsList) && record.productsList.length > 0) return record.productsList;
-    return [];
-  };
-
-  const resolvePrice = (product: any) => {
-    if (!product) return 0;
-    
-    // Try to find product in availableProducts by matching _id or model
-    const productId = product._id || product.id;
-    const productModel = product.model || product.name;
-    
-    const found = availableProducts.find((p: any) => 
-      p._id === productId || p.model === productModel || p.name === productModel
-    );
-    
-    if (found) {
-      return Number(found.supportedAmount || found.srp || found.price || found.sellingPrice || 0);
-    }
-    
-    // Fallback to product's own price fields
-    return Number(product.supportedAmount || product.price || product.sellingPrice || product.srp || 0);
-  };
-
-  const categorizeProduct = (product: any) => {
-    // Use the category field directly from the new billing model
-    if (product.category) {
-      const category = product.category.toLowerCase();
-      // Map backend categories to frontend display categories
-      switch (category) {
-        case 'laptops': return 'laptops';
-        case 'desktops': return 'desktops';
-        case 'aios': return 'aios';
-        case 'accessories': return 'accessories';
-        default: return 'accessories';
-      }
-    }
-    
-    // Fallback for old billing records without category field
-    const name = (product.name || product.model || product.productName || product.itemName || '').toUpperCase();
-    
-    if (name.includes('BAGPACK') || name.includes('BAG') || name.includes('MOUSE') || 
-        name.includes('KEYBOARD') || name.includes('HEADSET') || name.includes('SPEAKER') || 
-        name.includes('CABLE') || name.includes('ADAPTER') || name.includes('WEBCAM') || 
-        name.includes('MIC') || name.includes('PAD') || name.includes('COMBO')) return 'accessories';
-    
-    if (name.includes('ASUS NB ') || name.includes('GAMING CONSOLES') || 
-        name.includes(' NB ') || name.includes('NOTEBOOK') || name.includes('LAPTOP') || 
-        name.includes('CONSOLES')) return 'laptops';
-    
-    if (name.includes('ASUS DT ') || name.includes(' DT ') || 
-        name.includes('DESKTOP') || name.includes('TOWER') || name.includes(' PC ')) return 'desktops';
-    
-    if (name.includes('ASUS AIO ') || name.includes(' AIO ') || name.includes('ALL-IN-ONE')) return 'aios';
-    
-    return 'accessories';
   };
 
   const dailyDevicesData = useMemo(() => {
@@ -183,14 +68,9 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
     const fromDate = dateRange.from ? new Date(dateRange.from) : new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
     const toDate = dateRange.to ? new Date(dateRange.to) : new Date();
     
-    billingRecords.forEach((record) => {
-      const d = new Date(record.date || record.createdAt || Date.now());
-      const recordDateStr = d.toISOString().split('T')[0];
-      const fromDateStr = fromDate.toISOString().split('T')[0];
-      const toDateStr = toDate.toISOString().split('T')[0];
-      
-      if (recordDateStr >= fromDateStr && recordDateStr <= toDateStr) {
-        const key = recordDateStr;
+    deviceRecords.forEach((record) => {
+      const key = record.date;
+      if (key) {
         if (!map.has(key)) {
           map.set(key, { 
             laptops: 0, 
@@ -204,18 +84,11 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
           });
         }
         const dayData = map.get(key)!;
-        
-        const products = getProductsFromRecord(record);
-        
-        products.forEach((product: any) => {
-          const qty = Number(product?.quantity ?? product?.qty ?? 1) || 1;
-          const category = categorizeProduct(product);
-          const price = resolvePrice(product);
-          const revenue = price * qty;
-          
-          dayData[category as keyof typeof dayData] += qty;
-          dayData[`${category}Revenue` as keyof typeof dayData] += revenue;
-        });
+        const category = ['laptops', 'desktops', 'aios', 'accessories'].includes(record.category)
+          ? record.category
+          : 'accessories';
+        dayData[category as keyof typeof dayData] += Number(record.count) || 0;
+        dayData[`${category}Revenue` as keyof typeof dayData] += Number(record.totalAmount) || 0;
       }
     });
     
@@ -247,7 +120,7 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
       currentDate.setDate(currentDate.getDate() + 1);
     }
     return out;
-  }, [billingRecords, availableProducts, dateRange]);
+  }, [deviceRecords, dateRange]);
 
   const labels = dailyDevicesData.map((d) => {
     try {
