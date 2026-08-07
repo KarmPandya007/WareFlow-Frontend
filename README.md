@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment variables
+
+Copy `.env.example` to `.env.local` for local development. The frontend uses:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+For Vercel deployments, add `NEXT_PUBLIC_API_URL` in **Project Settings → Environment Variables** and set it to the public HTTPS URL of the deployed WareFlow backend. Environment variables prefixed with `NEXT_PUBLIC_` are embedded at build time, so redeploy after changing the value.
+
 ## Getting Started
 
 First, run the development server:
