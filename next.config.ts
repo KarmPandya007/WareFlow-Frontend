@@ -1,8 +1,19 @@
 import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 
-const nextConfig: NextConfig = {
-  // Produces a self-contained server bundle for Docker / production
-  output: "standalone",
-};
+export default function nextConfig(phase: string): NextConfig {
+  const isDevelopmentServer = phase === PHASE_DEVELOPMENT_SERVER;
 
-export default nextConfig;
+  return {
+    // Keep development assets isolated from `next build`. Running a production
+    // build while the dev server is open must not invalidate its CSS/JS chunks.
+    distDir: isDevelopmentServer ? ".next-dev" : ".next",
+
+    // Most data pages load through mount effects. Disabling the development-only
+    // double mount prevents duplicate API requests and loading-state flicker.
+    reactStrictMode: false,
+
+    // Produces a self-contained server bundle for Docker / production.
+    output: "standalone",
+  };
+}

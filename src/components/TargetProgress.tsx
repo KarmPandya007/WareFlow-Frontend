@@ -40,37 +40,27 @@ export default function TargetProgress({ userId }: TargetProgressProps) {
   }, [userId]);
 
   const fetchUserTargets = async () => {
-    console.log('TargetProgress: Fetching user targets, userId:', userId);
+    setIsLoading(true);
     try {
-      let url;
-      if (userId) {
-        // Admin viewing specific user's targets
-        url = `${getApiUrl()}/api/targets/user/${userId}`;
-      } else {
-        // Current user viewing their own targets - get user ID from localStorage
-        const currentUserId = localStorage.getItem('userId');
-        if (!currentUserId) {
-          console.error('TargetProgress: No user ID found in localStorage');
-          setIsLoading(false);
-          return;
-        }
-        url = `${getApiUrl()}/api/targets/user/${currentUserId}`;
-      }
-      
-      console.log('TargetProgress: API URL:', url);
+      // Salespeople use the authenticated-user endpoint. Admins can optionally
+      // request a specific salesperson through the protected user route.
+      const url = userId
+        ? `${getApiUrl()}/api/targets/user/${encodeURIComponent(userId)}`
+        : `${getApiUrl()}/api/targets/`;
       
       const response = await fetch(url, {
         credentials: 'include',
       });
-      
-      console.log('TargetProgress: Response status:', response.status);
-      
+
+      const data = await response.json().catch(() => null);
       if (response.ok) {
-        const data = await response.json();
-        console.log('TargetProgress: Response data:', data);
-        setTargets(data.targets || data || []);
+        setTargets(Array.isArray(data?.targets) ? data.targets : Array.isArray(data) ? data : []);
       } else {
-        console.error('TargetProgress: Failed to fetch targets:', response.status);
+        setTargets([]);
+        console.error(
+          `TargetProgress: Failed to fetch targets (${response.status}):`,
+          data?.message || response.statusText
+        );
       }
     } catch (error) {
       console.error('TargetProgress: Error fetching targets:', error);

@@ -1,6 +1,15 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import BillingsPerDayChart from '@/components/BillingsPerDayChart';
 import DevicesSoldChart from '@/components/DevicesSoldChart';
+import { Building2, UserRound } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { DateRangePicker, DateRangeValue } from '@/components/ui/date-range-picker';
 
 interface BillingChartsProps {
   userRole: string;
@@ -26,6 +35,12 @@ export const BillingCharts = memo(function BillingCharts({
   setCurrentChartIndex
 }: BillingChartsProps) {
   const chartsCount = 2;
+  const [dateRange, setDateRange] = useState<DateRangeValue>(() => {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 13);
+    const format = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return { from: format(start), to: format(today) };
+  });
 
   return (
     <div className="mb-4 sm:mb-6">
@@ -35,88 +50,111 @@ export const BillingCharts = memo(function BillingCharts({
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-slate-100">
               Analytics
             </h3>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentChartIndex(prev => prev === 0 ? chartsCount - 1 : prev - 1)}
-                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                title="Previous Chart"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <span className="text-sm text-gray-500 dark:text-slate-400 min-w-[150px] text-center font-medium">
-                {currentChartIndex === 0 ? 'Billings Per Day' : 'Devices Sold Per Day'}
-              </span>
-              <button
-                onClick={() => setCurrentChartIndex(prev => prev === chartsCount - 1 ? 0 : prev + 1)}
-                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                title="Next Chart"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+            <div className="flex rounded-xl border border-gray-200 bg-gray-50 p-1 dark:border-slate-700 dark:bg-slate-950/60">
+              {['Revenue', 'Devices sold'].map((label, index) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setCurrentChartIndex(index)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all sm:px-4 sm:text-sm ${
+                    currentChartIndex === index
+                      ? 'bg-white text-blue-700 shadow-sm ring-1 ring-gray-200 dark:bg-slate-800 dark:text-blue-300 dark:ring-slate-700'
+                      : 'text-gray-500 hover:text-gray-900 dark:text-slate-400 dark:hover:text-slate-100'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {userRole === 'admin' && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex items-center gap-2">
-                <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300 whitespace-nowrap">Branch:</label>
-                <select
+          <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 lg:flex-row lg:items-end lg:justify-between dark:border-slate-800 dark:bg-slate-950/50">
+            {userRole === 'admin' && (
+              <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row lg:max-w-2xl">
+                <div className="min-w-0 flex-1 space-y-1.5">
+                <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                  <Building2 className="h-3.5 w-3.5" />
+                  Branch
+                </label>
+                <Select
                   value={selectedBranchForCharts}
-                  onChange={(e) => setSelectedBranchForCharts(e.target.value)}
-                  className="w-40 sm:w-48 px-2 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100"
+                  onValueChange={setSelectedBranchForCharts}
                 >
-                  <option value="all">All Branches</option>
-                  {branches.map(branch => (
-                    <option key={branch._id} value={branch._id}>
-                      {branch.name || branch.branchName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300 whitespace-nowrap">Sales:</label>
-                <select
+                  <SelectTrigger aria-label="Filter analytics by branch" className="h-11 bg-white dark:bg-slate-900">
+                    <SelectValue placeholder="Select a branch" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    <SelectItem value="all">All branches</SelectItem>
+                    {branches.map((branch, index) => {
+                      const branchId = branch._id || branch.id;
+                      if (!branchId) return null;
+                      return (
+                        <SelectItem key={branchId || `branch-${index}`} value={String(branchId)}>
+                          {branch.name || branch.branchName || 'Unnamed branch'}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                </div>
+                <div className="min-w-0 flex-1 space-y-1.5">
+                <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                  <UserRound className="h-3.5 w-3.5" />
+                  Sales person
+                </label>
+                <Select
                   value={selectedSalesPersonForCharts}
-                  onChange={(e) => setSelectedSalesPersonForCharts(e.target.value)}
-                  className="w-40 sm:w-48 px-2 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100"
+                  onValueChange={setSelectedSalesPersonForCharts}
                 >
-                  <option value="all">All Sales Persons</option>
-                  {salesPersons.map((person, index) => (
-                    <option key={person._id || person.id || `sp-${index}`} value={person._id || person.id}>
-                      {`${person.firstName || person.name} ${person.lastName || ''}`.trim()}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger aria-label="Filter analytics by sales person" className="h-11 bg-white dark:bg-slate-900">
+                    <SelectValue placeholder="Select a sales person" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    <SelectItem value="all">All sales persons</SelectItem>
+                    {salesPersons.map((person, index) => {
+                      const personId = person._id || person.id;
+                      if (!personId) return null;
+                      const personName = `${person.firstName || person.name || ''} ${person.lastName || ''}`.trim();
+                      return (
+                        <SelectItem key={personId || `sp-${index}`} value={String(personId)}>
+                          {personName || 'Unnamed sales person'}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                </div>
               </div>
+            )}
+
+            <div className="ml-auto w-full space-y-1.5 sm:w-auto">
+              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400 lg:justify-end">
+                Date range
+              </label>
+              <DateRangePicker value={dateRange} onChange={setDateRange} />
             </div>
-          )}
+          </div>
         </div>
 
         <div className="relative overflow-hidden">
-          <div 
-            className="flex transition-transform duration-300 ease-in-out"
-            style={{ transform: `translateX(-${currentChartIndex * 100}%)` }}
-          >
-            <div className="w-full flex-shrink-0">
+          <div key={currentChartIndex} className="animate-in fade-in slide-in-from-bottom-1 duration-200">
+            {currentChartIndex === 0 ? (
               <BillingsPerDayChart 
                 isAdmin={userRole === 'admin'} 
                 userId={userRole !== 'admin' && typeof window !== 'undefined' ? localStorage.getItem('userId') || undefined : undefined}
                 branchId={userRole === 'admin' && selectedBranchForCharts !== 'all' ? selectedBranchForCharts : undefined}
                 salesPersonId={userRole === 'admin' && selectedSalesPersonForCharts !== 'all' ? selectedSalesPersonForCharts : undefined}
+                dateRange={dateRange}
               />
-            </div>
-            <div className="w-full flex-shrink-0">
+            ) : (
               <DevicesSoldChart 
                 isAdmin={userRole === 'admin'} 
                 userId={userRole !== 'admin' && typeof window !== 'undefined' ? localStorage.getItem('userId') || undefined : undefined}
                 branchId={userRole === 'admin' && selectedBranchForCharts !== 'all' ? selectedBranchForCharts : undefined}
                 salesPersonId={userRole === 'admin' && selectedSalesPersonForCharts !== 'all' ? selectedSalesPersonForCharts : undefined}
+                dateRange={dateRange}
               />
-            </div>
+            )}
           </div>
         </div>
 

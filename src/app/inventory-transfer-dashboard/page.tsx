@@ -342,6 +342,7 @@ export default function InventoryTransferPage() {
       setTransfers([]);
     } finally {
       setIsLoadingTransfers(false);
+      setIsInitialLoading(false);
     }
   };
 
@@ -1256,43 +1257,43 @@ export default function InventoryTransferPage() {
                 {/* Transfer Summary */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-3 sm:space-y-4">
-                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Transfer Information</h3>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg space-y-2 sm:space-y-3">
+                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">Transfer Information</h3>
+                    <div className="bg-muted/50 border border-border p-3 sm:p-4 rounded-lg space-y-2 sm:space-y-3">
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Date</span>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase block">Date</span>
+                        <span className="text-sm text-foreground">
                           {new Date(viewingTransfer.date).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Source</span>
-                          <span className="text-sm text-gray-700">{viewingTransfer.sourceGodown?.name || 'N/A'}</span>
+                          <span className="text-xs font-semibold text-muted-foreground uppercase block">Source</span>
+                          <span className="text-sm text-foreground">{viewingTransfer.sourceGodown?.name || 'N/A'}</span>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 uppercase block">Destination</span>
-                          <span className="text-sm text-gray-700">{viewingTransfer.destinationGodown?.name || 'N/A'}</span>
+                          <span className="text-xs font-semibold text-muted-foreground uppercase block">Destination</span>
+                          <span className="text-sm text-foreground">{viewingTransfer.destinationGodown?.name || 'N/A'}</span>
                         </div>
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Created By</span>
-                        <span className="text-sm text-gray-700">{viewingTransfer.createdBy ? `${viewingTransfer.createdBy.firstName} ${viewingTransfer.createdBy.lastName || ''}`.trim() : 'N/A'}</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase block">Created By</span>
+                        <span className="text-sm text-foreground">{viewingTransfer.createdBy ? `${viewingTransfer.createdBy.firstName} ${viewingTransfer.createdBy.lastName || ''}`.trim() : 'N/A'}</span>
                       </div>
                     </div>
                   </div>
                   
                   <div className="space-y-3 sm:space-y-4">
-                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Transfer Summary</h3>
-                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg space-y-2 sm:space-y-3">
+                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">Transfer Summary</h3>
+                    <div className="bg-muted/50 border border-border p-3 sm:p-4 rounded-lg space-y-2 sm:space-y-3">
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Created At</span>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase block">Created At</span>
+                        <span className="text-sm text-foreground">
                           {new Date(viewingTransfer.createdAt).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                         </span>
                       </div>
                       <div>
-                        <span className="text-xs font-semibold text-gray-500 uppercase block">Total Items</span>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase block">Total Items</span>
+                        <span className="text-sm text-foreground">
                           {(() => {
                             const transferItems = (viewingTransfer as any).items;
                             if (transferItems && Array.isArray(transferItems)) {
@@ -1309,12 +1310,12 @@ export default function InventoryTransferPage() {
 
                 {/* Products Table */}
                 <div className="space-y-3 sm:space-y-4">
-                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Transferred Items</h3>
+                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">Transferred Items</h3>
                   
                   {/* Desktop Table */}
-                  <div className="hidden sm:block border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="hidden sm:block border border-border rounded-lg overflow-hidden">
                     <table className="w-full text-sm text-left">
-                      <thead className="bg-gray-50 text-gray-500 font-semibold border-b border-gray-200">
+                      <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border">
                         <tr>
                           <th className="px-4 py-3">Product Name</th>
                           <th className="px-4 py-3">Serial Number</th>
@@ -1322,7 +1323,7 @@ export default function InventoryTransferPage() {
                           <th className="px-4 py-3">Batch Number</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-border">
                         {(() => {
                           const transferItems = (viewingTransfer as any).items;
                           
@@ -1338,17 +1339,17 @@ export default function InventoryTransferPage() {
                               const itemName = getProductDisplayName(item.product);
                               
                               return (
-                                <tr key={idx} className="hover:bg-gray-50">
+                                <tr key={idx} className="hover:bg-muted/40">
                                   <td className="px-4 py-3">
-                                    <div className="font-medium text-gray-900">{itemName}</div>
+                                    <div className="font-medium text-foreground">{itemName}</div>
                                   </td>
-                                  <td className="px-4 py-3 text-gray-600">
+                                  <td className="px-4 py-3 text-muted-foreground">
                                     {item.product?.serialNumber || 'N/A'}
                                   </td>
-                                  <td className="px-4 py-3 text-center text-gray-600">
+                                  <td className="px-4 py-3 text-center text-muted-foreground">
                                     {item.quantity || 0}
                                   </td>
-                                  <td className="px-4 py-3 text-gray-600">
+                                  <td className="px-4 py-3 text-muted-foreground">
                                     {item.batchNo || viewingTransfer.batchNo || 'N/A'}
                                   </td>
                                 </tr>
@@ -1365,15 +1366,15 @@ export default function InventoryTransferPage() {
                             const itemName = getProductDisplayName(viewingTransfer.product);
                             
                             return (
-                              <tr className="hover:bg-gray-50">
+                              <tr className="hover:bg-muted/40">
                                 <td className="px-4 py-3">
-                                  <div className="font-medium text-gray-900">{itemName}</div>
+                                  <div className="font-medium text-foreground">{itemName}</div>
                                 </td>
-                                <td className="px-4 py-3 text-gray-600">N/A</td>
-                                <td className="px-4 py-3 text-center text-gray-600">
+                                <td className="px-4 py-3 text-muted-foreground">N/A</td>
+                                <td className="px-4 py-3 text-center text-muted-foreground">
                                   {viewingTransfer.quantity || 0}
                                 </td>
-                                <td className="px-4 py-3 text-gray-600">
+                                <td className="px-4 py-3 text-muted-foreground">
                                   {viewingTransfer.batchNo || 'N/A'}
                                 </td>
                               </tr>
@@ -1401,20 +1402,20 @@ export default function InventoryTransferPage() {
                           const itemName = getProductDisplayName(item.product);
                           
                           return (
-                            <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                              <div className="font-medium text-gray-900 mb-2">{itemName}</div>
+                            <div key={idx} className="bg-muted/50 p-3 rounded-lg border border-border">
+                              <div className="font-medium text-foreground mb-2">{itemName}</div>
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
-                                  <span className="text-xs text-gray-500 block">Serial Number</span>
-                                  <span className="text-gray-700">{item.product?.serialNumber || 'N/A'}</span>
+                                  <span className="text-xs text-muted-foreground block">Serial Number</span>
+                                  <span className="text-foreground">{item.product?.serialNumber || 'N/A'}</span>
                                 </div>
                                 <div>
-                                  <span className="text-xs text-gray-500 block">Quantity</span>
-                                  <span className="text-gray-700">{item.quantity || 0}</span>
+                                  <span className="text-xs text-muted-foreground block">Quantity</span>
+                                  <span className="text-foreground">{item.quantity || 0}</span>
                                 </div>
                                 <div className="col-span-2">
-                                  <span className="text-xs text-gray-500 block">Batch Number</span>
-                                  <span className="text-gray-700">{item.batchNo || viewingTransfer.batchNo || 'N/A'}</span>
+                                  <span className="text-xs text-muted-foreground block">Batch Number</span>
+                                  <span className="text-foreground">{item.batchNo || viewingTransfer.batchNo || 'N/A'}</span>
                                 </div>
                               </div>
                             </div>
@@ -1431,20 +1432,20 @@ export default function InventoryTransferPage() {
                         const itemName = getProductDisplayName(viewingTransfer.product);
                         
                         return (
-                          <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <div className="font-medium text-gray-900 mb-2">{itemName}</div>
+                          <div className="bg-muted/50 p-3 rounded-lg border border-border">
+                            <div className="font-medium text-foreground mb-2">{itemName}</div>
                             <div className="grid grid-cols-2 gap-2 text-sm">
                               <div>
-                                <span className="text-xs text-gray-500 block">Serial Number</span>
-                                <span className="text-gray-700">N/A</span>
+                                <span className="text-xs text-muted-foreground block">Serial Number</span>
+                                <span className="text-foreground">N/A</span>
                               </div>
                               <div>
-                                <span className="text-xs text-gray-500 block">Quantity</span>
-                                <span className="text-gray-700">{viewingTransfer.quantity || 0}</span>
+                                <span className="text-xs text-muted-foreground block">Quantity</span>
+                                <span className="text-foreground">{viewingTransfer.quantity || 0}</span>
                               </div>
                               <div className="col-span-2">
-                                <span className="text-xs text-gray-500 block">Batch Number</span>
-                                <span className="text-gray-700">{viewingTransfer.batchNo || 'N/A'}</span>
+                                <span className="text-xs text-muted-foreground block">Batch Number</span>
+                                <span className="text-foreground">{viewingTransfer.batchNo || 'N/A'}</span>
                               </div>
                             </div>
                           </div>

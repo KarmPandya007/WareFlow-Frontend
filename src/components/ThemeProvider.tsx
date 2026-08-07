@@ -15,7 +15,6 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
@@ -54,7 +53,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    setMounted(true);
     // 1. Initial local storage check
     const localTheme = localStorage.getItem("theme") as Theme | null;
     if (localTheme && (localTheme === "dark" || localTheme === "light")) {

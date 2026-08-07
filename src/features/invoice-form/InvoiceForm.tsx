@@ -108,20 +108,42 @@ export default function InvoiceForm() {
   // Poll for QR uploads
   useEffect(() => {
     if (!sessionId) return;
-    const interval = setInterval(async () => {
+
+    const controller = new AbortController();
+    let polling = false;
+
+    const pollForUploads = async () => {
+      // Avoid overlapping requests when a response takes longer than the interval.
+      if (polling) return;
+      polling = true;
+
       try {
-        const res = await fetch(`${getApiUrl()}/api/uploads/qr/${sessionId}`, { credentials: 'include' });
+        // Use the same-origin route. It proxies the backend request and falls back
+        // to the local upload store when the backend is temporarily unavailable.
+        const res = await fetch(`/api/uploads/qr/${encodeURIComponent(sessionId)}`, {
+          credentials: 'include',
+          signal: controller.signal,
+        });
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.uploads) {
             setQrUploads(data.uploads);
           }
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
+        // Network interruptions are expected during polling; retry next interval.
+      } finally {
+        polling = false;
       }
-    }, 10000);
-    return () => clearInterval(interval);
+    };
+
+    void pollForUploads();
+    const interval = window.setInterval(pollForUploads, 10000);
+
+    return () => {
+      controller.abort();
+      window.clearInterval(interval);
+    };
   }, [sessionId, setQrUploads]);
 
   // Compute Invoice Totals Reactively

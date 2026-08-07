@@ -414,166 +414,6 @@ export default function DashboardPage() {
     setLoadingProductDetails(false);
   }, [getApiUrl]);
 
-  // Download XML - memoized
-  const downloadXML = useCallback(async (billingId: string) => {
-    try {
-      // Find the billing record from stored data
-      const billingRecord = recentActivityFull.find((record: any) => record._id === billingId);
-      if (!billingRecord) {
-        alert('Billing record not found. Please refresh the page and try again.');
-        return;
-      }
-
-      let products = billingRecord.products || [];
-
-      // Fetch product details if needed
-      if (products.length > 0) {
-        const firstProduct = products[0];
-        const needsFetch =
-          typeof firstProduct === "string" || // Product is an ID string
-          (typeof firstProduct === "object" && firstProduct._id && (!firstProduct.name && !firstProduct.model)); // ObjectId without details
-
-        if (needsFetch) {
-          const productPromises = products.map(async (productRef: any) => {
-            const productId =
-              typeof productRef === "string" ? productRef : productRef._id;
-            try {
-              const response = await fetch(
-                `${getApiUrl()}/api/products/${productId}`,
-                { credentials: "include" }
-              );
-              const productData = await response.json();
-              // Handle both direct product object and wrapped response
-              return productData.success && productData.product ? productData.product : productData;
-            } catch (error) {
-              console.error(`Failed to fetch product:`, error);
-              return null;
-            }
-          });
-
-          const fetchedProducts = await Promise.all(productPromises);
-          products = fetchedProducts.filter((p) => p !== null);
-        }
-      }
-
-      // Generate XML using the same format as invoice form
-      const totalAmount = parseFloat(billingRecord.totalAmount) || calculateTotalFromRecord(billingRecord);
-
-      // Calculate GST (assuming 18% GST: 9% CGST + 9% SGST)
-      const gstRate = 0.18;
-      const taxableAmount = totalAmount / (1 + gstRate);
-      const gstPerHead = (totalAmount - taxableAmount) / 2; // Split GST between CGST and SGST
-
-      // Generate voucher number
-      const voucherNumber = `INV-${Date.now()}`;
-      const reference = voucherNumber;
-
-      // Format date for Tally
-      const formatDate = (dateString: string) => {
-        const date = dateString ? new Date(dateString) : new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}${month}${day}`; // Returns YYYYMMDD format
-      };
-
-      const currentDate = formatDate(billingRecord.date);
-
-      // Format payment mode for display
-      const paymentModeDisplay = formatPaymentMode(billingRecord.paymentMode);
-
-      const xmlData = `<?xml version="1.0" encoding="UTF-8"?>
-<ENVELOPE>
-<HEADER>
-<TALLYREQUEST>Import Data</TALLYREQUEST>
-</HEADER>
-<BODY>
-<IMPORTDATA>
-<REQUESTDESC>
-<REPORTNAME>All Masters</REPORTNAME>
-<STATICVARIABLES>
-<SVCURRENTCOMPANY>${billingRecord.customerName}</SVCURRENTCOMPANY>
-</STATICVARIABLES>
-<REQUESTDATA>
-<TALLYMESSAGE xmlns:UDF="TallyUDF">
-<LEDGER NAME="${billingRecord.customerName}" RESERVEDNAME="">
-<NAME>${billingRecord.customerName}</NAME>
-<PARENT>Sundry Debtors</PARENT>
-<ACCOUNTTYPE>Sundry Debtor</ACCOUNTTYPE>
-</LEDGER>
-</TALLYMESSAGE>
-<TALLYMESSAGE xmlns:UDF="TallyUDF">
-<LEDGER NAME="Sales Account" RESERVEDNAME="">
-<NAME>Sales Account</NAME>
-<PARENT>Indirect Expenses</PARENT>
-<ACCOUNTTYPE>Indirect Expenses</ACCOUNTTYPE>
-</LEDGER>
-</TALLYMESSAGE>
-
-</REQUESTDATA>
-</REQUESTDESC>
-
-<REQUESTDESC>
-<REPORTNAME>Vouchers</REPORTNAME>
-<STATICVARIABLES>
-<SVCURRENTCOMPANY>${billingRecord.customerName}</SVCURRENTCOMPANY>
-</STATICVARIABLES>
-<REQUESTDATA>
-<TALLYMESSAGE xmlns:UDF="TallyUDF">
-<VOUCHER VCHTYPE="Sales" ACTION="Create">
-<DATE>${currentDate}</DATE>
-<VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
-<VOUCHERNUMBER>AUTO</VOUCHERNUMBER>
-<REFERENCE>${reference}</REFERENCE>
-<NARRATION>Sales Invoice for ${billingRecord.customerName}</NARRATION>
-<PARTYLEDGERNAME>${billingRecord.customerName}</PARTYLEDGERNAME>
-<ALLLEDGERENTRIES.LIST>
-<LEDGERNAME>${billingRecord.customerName}</LEDGERNAME>
-<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-<AMOUNT>-${totalAmount.toFixed(0)}</AMOUNT>
-</ALLLEDGERENTRIES.LIST>
-<ALLLEDGERENTRIES.LIST>
-<LEDGERNAME>Sales Account</LEDGERNAME>
-<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
-<AMOUNT>${totalAmount.toFixed(0)}</AMOUNT>
-</ALLLEDGERENTRIES.LIST>
-
-<UDF:INVOICEINFO.CUSTOMERNAME>${billingRecord.customerName}</UDF:INVOICEINFO.CUSTOMERNAME>
-<UDF:INVOICEINFO.ADDRESS>${billingRecord.address || ''}</UDF:INVOICEINFO.ADDRESS>
-<UDF:INVOICEINFO.PINCODE></UDF:INVOICEINFO.PINCODE>
-<UDF:INVOICEINFO.CONTACTPERSON></UDF:INVOICEINFO.CONTACTPERSON>
-<UDF:INVOICEINFO.MOBILE>${billingRecord.mobile || ''}</UDF:INVOICEINFO.MOBILE>
-<UDF:INVOICEINFO.EMAIL>${billingRecord.email || ''}</UDF:INVOICEINFO.EMAIL>
-<UDF:INVOICEINFO.GSTNUMBER>${billingRecord.gstNumber || ''}</UDF:INVOICEINFO.GSTNUMBER>
-<UDF:INVOICEINFO.SALESPERSON>${billingRecord.salesPerson ? `${billingRecord.salesPerson.firstName} ${billingRecord.salesPerson.lastName}` : 'Admin'}</UDF:INVOICEINFO.SALESPERSON>
-  <UDF:INVOICEINFO.BRANCH>${resolveBranchName(billingRecord.branch)}</UDF:INVOICEINFO.BRANCH>
-<UDF:INVOICEINFO.SALESTYPE>${billingRecord.salesType || 'Retail'}</UDF:INVOICEINFO.SALESTYPE>
-<UDF:INVOICEINFO.PAYMENTMODE>${paymentModeDisplay || 'N/A'}</UDF:INVOICEINFO.PAYMENTMODE>
-</VOUCHER>
-</TALLYMESSAGE>
-</REQUESTDATA>
-</REQUESTDESC>
-</IMPORTDATA>
-</BODY>
-</ENVELOPE>`;
-
-      // Download XML file
-      const blob = new Blob([xmlData], { type: 'application/xml' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `Tally_Invoice_${billingRecord.customerName}_${Date.now()}.xml`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-    } catch (error) {
-      logger.error('Error generating XML:', error);
-      alert('Error generating XML. Please check console for details.');
-    }
-  }, [recentActivityFull, formatPaymentMode, resolveBranchName]);
-
   // Download Excel - memoized with dynamic import
   const downloadExcel = useCallback(async (billingId: string) => {
     const indianStates = [
@@ -1040,14 +880,6 @@ export default function DashboardPage() {
                                           </svg>
                                         </button>
                                         <button 
-                                          onClick={() => downloadXML(record.id)}
-                                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/60 transition-all active:scale-95"
-                                          title="Download XML"
-                                        >
-                                          <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                                          XML
-                                        </button>
-                                        <button 
                                           onClick={() => downloadExcel(record.id)}
                                           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all active:scale-95"
                                           title="Download Excel"
@@ -1103,13 +935,6 @@ export default function DashboardPage() {
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                          </svg>
-                       </button>
-                       <button 
-                         onClick={() => downloadXML(record.id)}
-                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/60 transition-all"
-                       >
-                         <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                         XML
                        </button>
                        <button 
                          onClick={() => downloadExcel(record.id)}

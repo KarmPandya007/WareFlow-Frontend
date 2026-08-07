@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import type { DateRangeValue } from "@/components/ui/date-range-picker";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,22 +23,13 @@ interface DevicesSoldChartProps {
   userId?: string;
   branchId?: string;
   salesPersonId?: string;
+  dateRange: DateRangeValue;
 }
 
-export default function DevicesSoldChart({ isAdmin = false, userId, branchId, salesPersonId }: DevicesSoldChartProps) {
+export default function DevicesSoldChart({ isAdmin = false, userId, branchId, salesPersonId, dateRange }: DevicesSoldChartProps) {
   const [billingRecords, setBillingRecords] = useState<any[]>([]);
   const [availableProducts, setAvailableProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [dateRange, setDateRange] = useState<{ from: string; to: string }>(() => {
-    const today = new Date();
-    const twoWeeksAgo = new Date(today);
-    twoWeeksAgo.setDate(today.getDate() - 14);
-    return {
-      from: twoWeeksAgo.toISOString().split('T')[0],
-      to: today.toISOString().split('T')[0]
-    };
-  });
-
   useEffect(() => {
     fetchProducts();
     fetchBillingData();
@@ -71,7 +63,8 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
   const fetchBillingData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${getApiUrl()}/api/billing/`, {
+      const params = new URLSearchParams({ fromDate: dateRange.from, toDate: dateRange.to, limit: '10000' });
+      const response = await fetch(`${getApiUrl()}/api/billing/?${params.toString()}`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -378,26 +371,6 @@ export default function DevicesSoldChart({ isAdmin = false, userId, branchId, sa
               {isAdmin ? 'Products Sold Daily' : 'My Products Sold Daily'}
             </h3>
             <p className="text-sm text-gray-600 dark:text-slate-400">Product category breakdown over time</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800/60 p-3 rounded-xl">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-slate-300">From:</label>
-            <input
-              type="date"
-              value={dateRange.from}
-              onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-              className="px-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-slate-300">To:</label>
-            <input
-              type="date"
-              value={dateRange.to}
-              onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-              className="px-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-            />
           </div>
         </div>
       </div>

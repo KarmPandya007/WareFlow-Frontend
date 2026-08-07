@@ -31,30 +31,30 @@
     --radius: 0.5rem;
   }
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 7%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 7%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 94%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 94%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 94%;
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 20 14% 15%;
+    --accent-foreground: 24 95% 65%;
+    --destructive: 0 68% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 17%;
+    --input: 0 0% 18%;
+    --ring: 24 95% 53%;
+    --chart-1: 24 95% 53%;
+    --chart-2: 142 69% 42%;
+    --chart-3: 0 72% 51%;
+    --chart-4: 35 92% 55%;
+    --chart-5: 0 0% 52%;
   }
 }
 
@@ -74,16 +74,110 @@
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #0a0a0a;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #3a3a3a;
   border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #f97316;
+}
+
+/* Matte dark theme -------------------------------------------------------
+   The application historically used explicit slate/blue utilities in many
+   components. These mappings keep dark mode neutral and consistent without
+   affecting the light palette or semantic success/error colors. */
+html.dark,
+html.dark body {
+  background: #0a0a0a;
+}
+
+.dark .dark\:bg-slate-950 { background-color: #090909; }
+.dark .dark\:bg-slate-950\/60 { background-color: rgb(9 9 9 / 0.92); }
+.dark .dark\:bg-slate-950\/50 { background-color: rgb(9 9 9 / 0.88); }
+.dark .dark\:bg-slate-900 { background-color: #121212; }
+.dark .dark\:bg-slate-900\/95 { background-color: rgb(18 18 18 / 0.98); }
+.dark .dark\:bg-slate-900\/80 { background-color: rgb(18 18 18 / 0.96); }
+.dark .dark\:bg-slate-800 { background-color: #1d1d1d; }
+.dark .dark\:bg-slate-800\/95 { background-color: rgb(29 29 29 / 0.98); }
+.dark .dark\:bg-slate-800\/80 { background-color: rgb(29 29 29 / 0.94); }
+.dark .dark\:bg-slate-800\/60 { background-color: rgb(29 29 29 / 0.88); }
+.dark .dark\:bg-slate-800\/50 { background-color: rgb(29 29 29 / 0.82); }
+.dark .dark\:bg-slate-700 { background-color: #303030; }
+
+.dark .dark\:border-slate-900 { border-color: #202020; }
+.dark .dark\:border-slate-800 { border-color: #292929; }
+.dark .dark\:border-slate-700 { border-color: #3a3a3a; }
+.dark .dark\:divide-slate-800 > :not([hidden]) ~ :not([hidden]) { border-color: #292929; }
+.dark .dark\:ring-slate-700 { --tw-ring-color: #3a3a3a; }
+
+.dark .dark\:text-slate-100 { color: #f5f5f5; }
+.dark .dark\:text-slate-200 { color: #e5e5e5; }
+.dark .dark\:text-slate-300 { color: #c8c8c8; }
+.dark .dark\:text-slate-400 { color: #9d9d9d; }
+.dark .dark\:text-slate-500 { color: #737373; }
+.dark .dark\:placeholder-slate-500::placeholder { color: #737373; }
+
+/* Orange is the only navigational/interactive accent in dark mode. */
+.dark .dark\:text-blue-200 { color: #fed7aa; }
+.dark .dark\:text-blue-300 { color: #fdba74; }
+.dark .dark\:text-blue-400 { color: #fb923c; }
+.dark .dark\:bg-blue-950\/60,
+.dark .dark\:bg-blue-950\/50,
+.dark .dark\:bg-blue-950\/40,
+.dark .dark\:bg-blue-950\/30 { background-color: rgb(67 29 7 / 0.72); }
+.dark .dark\:border-blue-900,
+.dark .dark\:border-blue-900\/60 { border-color: #7c2d12; }
+.dark .dark\:ring-blue-900 { --tw-ring-color: #7c2d12; }
+
+.dark .bg-blue-50 { background-color: #21150f; }
+.dark .bg-blue-500,
+.dark .bg-blue-600,
+.dark .bg-indigo-600 { background-color: #ea580c; }
+.dark .hover\:bg-blue-50:hover { background-color: #28170e; }
+.dark .hover\:bg-blue-100:hover { background-color: #32190d; }
+.dark .hover\:bg-blue-700:hover,
+.dark .hover\:bg-indigo-700:hover { background-color: #c2410c; }
+.dark .text-blue-500,
+.dark .text-blue-600,
+.dark .text-blue-700,
+.dark .text-indigo-600 { color: #f97316; }
+.dark .hover\:text-blue-600:hover,
+.dark .hover\:text-blue-700:hover,
+.dark .hover\:text-blue-800:hover { color: #fb923c; }
+.dark .border-blue-100,
+.dark .border-blue-200,
+.dark .border-blue-300,
+.dark .border-blue-400 { border-color: #7c2d12; }
+.dark .focus\:border-blue-300:focus,
+.dark .focus\:border-blue-400:focus { border-color: #f97316; }
+.dark .focus\:ring-blue-100:focus,
+.dark .focus\:ring-blue-500:focus { --tw-ring-color: rgb(249 115 22 / 0.35); }
+
+.dark [class*="from-blue-"][class*="to-blue-"],
+.dark [class*="from-blue-"][class*="to-indigo-"] {
+  background-image: none;
+  background-color: #ea580c;
+}
+
+/* Matte surfaces use separation and borders instead of glow. */
+.dark [class*="shadow-blue"],
+.dark [class*="shadow-purple"],
+.dark [class*="shadow-pink"] {
+  box-shadow: none;
+}
+
+.dark [class*="dark:from-slate-"],
+.dark [class*="dark:to-slate-"] {
+  background-image: none;
+  background-color: #151515;
+}
+
+.dark .animate-blob {
+  display: none;
 }
 
 /* Native Calendar & Date Picker Theme Styling */
