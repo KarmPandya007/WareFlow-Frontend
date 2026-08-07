@@ -5,8 +5,10 @@ import AdminLayout from "@/components/AdminLayout";
 import { Calendar, Download, Eye } from "lucide-react";
 import { getApiUrl } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function DayBookPage() {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -21,7 +23,7 @@ export default function DayBookPage() {
   useEffect(() => {
     const role = localStorage.getItem('userRole')?.toLowerCase();
     if (role !== 'admin') {
-      window.location.href = '/billing';
+      router.replace('/billing');
       return;
     }
     fetchProducts();

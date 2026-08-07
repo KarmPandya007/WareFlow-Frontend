@@ -5,6 +5,7 @@ import AdminLayout from "@/components/AdminLayout";
 import { getApiUrl } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useRouter } from "next/navigation";
 import {
   AlertTriangle, Bot, ChevronLeft, ChevronRight, Loader2, Menu, MoreHorizontal,
   Pencil, Plus, Search, SendHorizonal, Sparkles, Trash2, User, X,
@@ -56,6 +57,7 @@ const syncChatUrl = (conversationId: string | null) => {
 };
 
 export default function AiAssistantPage() {
+  const router = useRouter();
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([greeting()]);
@@ -124,11 +126,11 @@ export default function AiAssistantPage() {
 
   useEffect(() => {
     if (localStorage.getItem("userRole")?.toLowerCase() !== "admin") {
-      window.location.href = "/billing";
+      router.replace("/billing");
       return;
     }
     void loadConversations(true);
-  }, [loadConversations]);
+  }, [loadConversations, router]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

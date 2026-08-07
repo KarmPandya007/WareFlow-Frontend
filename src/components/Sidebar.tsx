@@ -116,7 +116,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -139,6 +139,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const links = userRole === 'admin' ? [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -163,7 +164,7 @@ export default function Sidebar({ isOpen, setIsOpen, userRole }: SidebarProps) {
     // or just a visual button that triggers the parent handler
     if (typeof window !== "undefined") {
       window.localStorage.clear();
-      window.location.href = "/";
+      router.replace("/");
     }
   };
 

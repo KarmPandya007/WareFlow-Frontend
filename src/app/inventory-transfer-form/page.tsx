@@ -343,7 +343,7 @@ const fetchBranches = async () => {
         const errorData = await response.json().catch(() => ({}));
         if (response.status === 401) {
           setMessage("Session expired. Please login again.");
-          setTimeout(() => router.push('/login'), 2000);
+          setTimeout(() => router.replace('/'), 2000);
           return;
         }
         throw new Error(errorData.message || 'Failed to save transfer');

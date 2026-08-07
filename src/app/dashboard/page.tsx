@@ -7,8 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getApiUrl } from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { logger } from "@/lib/logger";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [userName, setUserName] = useState("Admin");
   const [currentDate, setCurrentDate] = useState("");
   const [totals, setTotals] = useState({
@@ -118,7 +120,7 @@ export default function DashboardPage() {
     if (typeof window !== "undefined") {
       const role = localStorage.getItem("userRole")?.toLowerCase();
       if (role !== "admin") {
-        window.location.href = "/billing";
+        router.replace("/billing");
         return;
       }
       const storedName = localStorage.getItem("userName");
@@ -684,13 +686,13 @@ export default function DashboardPage() {
             
              <div className="flex gap-2 flex-wrap">
               <button
-                onClick={() => (window.location.href = "/invoice-form")}
+                onClick={() => router.push("/invoice-form")}
                 className="bg-blue-600 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:shadow-blue-500/30 transition-all active:scale-95 text-xs sm:text-sm font-semibold flex items-center gap-2"
               >
                 <span>+</span> <span className="hidden sm:inline">New Billing</span><span className="sm:hidden">Billing</span>
               </button>
               <button
-                onClick={() => (window.location.href = "/branches")}
+                onClick={() => router.push("/branches")}
                 className="bg-emerald-500 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 hover:shadow-emerald-500/30 transition-all active:scale-95 text-xs sm:text-sm font-semibold flex items-center gap-2"
               >
                 <span>+</span> <span className="hidden sm:inline">Add Branch</span><span className="sm:hidden">Branch</span>

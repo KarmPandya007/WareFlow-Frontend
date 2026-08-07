@@ -17,8 +17,10 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Filter, Loader2, Search, Trash2, 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { useRouter } from "next/navigation";
 
 export default function BillingPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -66,7 +68,7 @@ export default function BillingPage() {
     setUserRole(normalizedRole);
 
     if (normalizedRole !== 'sales_person' && normalizedRole !== 'salesman' && normalizedRole !== 'admin') {
-      window.location.href = '/';
+      router.replace('/');
       return;
     }
   }, []);
@@ -136,7 +138,7 @@ export default function BillingPage() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          window.location.href = '/';
+          router.replace('/');
           return;
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -160,7 +162,7 @@ export default function BillingPage() {
       setLoading(false);
       setIsInitialLoading(false);
     }
-  }, [currentPage, debouncedSearchTerm, recordBranch, recordSalesPerson, recordPayment, recordFromDate, recordToDate, sortBy, sortDirection]);
+  }, [currentPage, debouncedSearchTerm, recordBranch, recordSalesPerson, recordPayment, recordFromDate, recordToDate, sortBy, sortDirection, router]);
 
   useEffect(() => {
     fetchBillings();
@@ -304,7 +306,7 @@ export default function BillingPage() {
             <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Manage invoice history and tax receipts.</p>
           </div>
           <button
-            onClick={() => (window.location.href = "/invoice-form")}
+            onClick={() => router.push("/invoice-form")}
             className="bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:shadow-blue-500/30 transition-all active:scale-95 text-sm font-semibold flex items-center gap-2"
           >
             + Create New Invoice

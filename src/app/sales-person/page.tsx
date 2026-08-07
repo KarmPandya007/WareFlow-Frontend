@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -44,6 +45,7 @@ import { getApiUrl } from "@/lib/api";
 import AdminLayout from "@/components/AdminLayout";
 
 export default function SalesPersonPage() {
+  const router = useRouter();
   const [branchCountInput, setBranchCountInput] = useState<string>("1");
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,7 +88,7 @@ export default function SalesPersonPage() {
   useEffect(() => {
     const role = typeof window !== "undefined" ? localStorage.getItem("userRole") || "user" : "user";
     if (role.toLowerCase() !== "admin") {
-      window.location.href = "/billing";
+      router.replace("/billing");
       return;
     }
 
